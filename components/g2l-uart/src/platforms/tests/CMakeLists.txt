@@ -19,26 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-cmake_minimum_required(VERSION 3.25)
-
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    message("Building G2Labs IDF framework itself")
-
-    if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-        message(STATUS "CMAKE_TOOLCHAIN_FILE not defined, setting default testing toolchain")
-        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/cmake/toolchains/tests-toolchain.cmake" CACHE FILEPATH "The toolchain file" FORCE)
-    endif()
-endif()
-
-project(g2labs-idf
-    VERSION 0.0.1
-    DESCRIPTION "G2 Labs IoT Development Framework"
-    LANGUAGES C CXX ASM)
-
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    include(${CMAKE_CURRENT_LIST_DIR}/cmake/g2l-idf.cmake)
-    message(STATUS "Adding code examples")
-    add_subdirectory(examples)
-endif()
-
-add_subdirectory(components)
+target_sources(${PROJECT_NAME}
+    PRIVATE g2l-uart.c
+)
