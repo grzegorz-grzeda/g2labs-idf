@@ -20,4 +20,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 add_subdirectory(g2l-log)
-add_subdirectory(hal)
+add_subdirectory(g2l-uart)

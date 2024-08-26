@@ -28,11 +28,13 @@ if(NOT __g2l_idf_env_set)
     include(${CMAKE_CURRENT_LIST_DIR}/utilities.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
 
-    get_property(G2L_IDF_TARGET_PLATFORM_VALUE CACHE G2L_IDF_TARGET_PLATFORM PROPERTY VALUE)
-    g2l_idf_build_set_property(G2L_IDF_TARGET_PLATFORM ${G2L_IDF_TARGET_PLATFORM_VALUE})
-
-    get_property(G2L_IDF_TARGET_PLATFORM_VARIANT_VALUE CACHE G2L_IDF_TARGET_PLATFORM_VARIANT PROPERTY VALUE)
-    g2l_idf_build_set_property(G2L_IDF_TARGET_PLATFORM_VARIANT ${G2L_IDF_TARGET_PLATFORM_VARIANT_VALUE})
+    if(NOT DEFINED G2L_IDF_TARGET_PLATFORM)
+        message(FATAL_ERROR "G2L_IDF_TARGET_PLATFORM is not defined - please specify it in your CMakeLists.txt or toolchain file")
+    else()
+        message(STATUS "G2L IDF: Toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+        message(STATUS "G2L IDF: Platform: ${G2L_IDF_TARGET_PLATFORM}")
+        message(STATUS "G2L IDF: Platform variant: ${G2L_IDF_TARGET_PLATFORM_VARIANT}")
+    endif()
 
     set_property(GLOBAL PROPERTY __G2L_IDF_ENV_SET 1)
 endif()

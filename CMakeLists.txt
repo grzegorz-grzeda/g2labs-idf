@@ -37,9 +37,6 @@ project(g2labs-idf
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     include(${CMAKE_CURRENT_LIST_DIR}/cmake/g2l-idf.cmake)
-    message(STATUS "CMAKE_TOOLCHAIN_FILE defined, using ${CMAKE_TOOLCHAIN_FILE}")
-    message(STATUS "Platform: ${G2L_IDF_TARGET_PLATFORM}")
-    message(STATUS "Platform variant: ${G2L_IDF_TARGET_PLATFORM_VARIANT}")
     message(STATUS "Adding code examples")
     add_subdirectory(examples)
 endif()
