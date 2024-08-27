@@ -24,7 +24,7 @@ cmake_minimum_required(VERSION 3.25)
 project(hello-world)
 include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
 
-add_library(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
     main.c
 )
 target_link_libraries(${PROJECT_NAME}

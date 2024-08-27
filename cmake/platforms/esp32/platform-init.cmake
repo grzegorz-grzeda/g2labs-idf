@@ -23,12 +23,12 @@
 
 include($ENV{IDF_PATH}/tools/cmake/idf.cmake)
 
-
 function(platform_build executable)
     idf_build_process("${ESP_TARGET}"
-    COMPONENTS
-    freertos
-    esptool_py
+        COMPONENTS
+        freertos
+        esptool_py
+        SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
     )
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
