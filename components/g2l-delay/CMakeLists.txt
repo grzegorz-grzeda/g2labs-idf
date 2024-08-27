@@ -19,7 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_subdirectory(g2l-log)
-add_subdirectory(g2l-uart)
-add_subdirectory(g2l-main)
-add_subdirectory(g2l-delay)
+cmake_minimum_required(VERSION 3.25)
+
+project(g2l-delay
+    VERSION 0.0.1
+    DESCRIPTION "G2Labs Delay Library"
+    LANGUAGES C
+)
+
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::delay ALIAS g2l-delay)
+
+add_subdirectory(src)

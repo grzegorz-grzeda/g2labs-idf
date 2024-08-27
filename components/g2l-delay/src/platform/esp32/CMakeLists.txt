@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_subdirectory(g2l-log)
-add_subdirectory(g2l-uart)
-add_subdirectory(g2l-main)
-add_subdirectory(g2l-delay)
+target_sources(${PROJECT_NAME}
+    PRIVATE g2l-delay.c
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE idf::freertos
+)

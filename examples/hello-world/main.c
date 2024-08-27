@@ -1,3 +1,4 @@
+#include "g2l-delay.h"
 #include "g2l-log.h"
 #include "g2l-uart.h"
 
@@ -7,7 +8,11 @@ int main() {
 
     char message[] = "Hello, World!";
     I("main", "Sending: %s", message);
-    while (1)
-        ;
+    while (1) {
+        I("main", "Tick");
+        g2l_delay_ms(1000);
+        I("main", "Tock");
+        g2l_delay_ms(1000);
+    }
     return 0;
 }

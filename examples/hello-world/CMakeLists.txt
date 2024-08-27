@@ -31,6 +31,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE g2l::log
     PRIVATE g2l::uart
     PRIVATE g2l::main
+    PRIVATE g2l::delay
 )
 
 g2l_idf_build(${PROJECT_NAME})

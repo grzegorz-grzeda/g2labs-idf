@@ -19,7 +19,4 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_subdirectory(g2l-log)
-add_subdirectory(g2l-uart)
-add_subdirectory(g2l-main)
-add_subdirectory(g2l-delay)
+add_subdirectory(${G2L_IDF_TARGET_PLATFORM})
