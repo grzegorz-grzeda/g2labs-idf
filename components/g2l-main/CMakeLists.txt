@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2024 G2Labs Grzegorz Grzeda
+# Copyright (c) 2024 Grzegorz Grzęda
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,23 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-#
-get_property(__g2l_idf_env_set GLOBAL PROPERTY __G2L_IDF_ENV_SET)
+cmake_minimum_required(VERSION 3.25)
 
-if(NOT __g2l_idf_env_set)
-    add_library(__g2l_idf_build_target STATIC IMPORTED GLOBAL)
+project(g2l-main
+    VERSION 0.0.1
+    DESCRIPTION "G2Labs Main"
+    LANGUAGES C
+)
 
-    include(${CMAKE_CURRENT_LIST_DIR}/utilities.cmake)
-    include(${CMAKE_CURRENT_LIST_DIR}/build.cmake)
-    include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
+add_library(${PROJECT_NAME})
+add_library(g2l::main ALIAS g2l-main)
 
-    if(NOT DEFINED G2L_IDF_TARGET_PLATFORM)
-        message(FATAL_ERROR "G2L_IDF_TARGET_PLATFORM is not defined - please specify it in your CMakeLists.txt or toolchain file")
-    else()
-        message(STATUS "G2L IDF: Toolchain: ${CMAKE_TOOLCHAIN_FILE}")
-        message(STATUS "G2L IDF: Platform: ${G2L_IDF_TARGET_PLATFORM}")
-        message(STATUS "G2L IDF: Platform variant: ${G2L_IDF_TARGET_PLATFORM_VARIANT}")
-    endif()
-
-    set_property(GLOBAL PROPERTY __G2L_IDF_ENV_SET 1)
-endif()
+add_subdirectory(platforms)

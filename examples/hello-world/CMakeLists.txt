@@ -22,12 +22,15 @@
 cmake_minimum_required(VERSION 3.25)
 
 project(hello-world)
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
 
-add_executable(${PROJECT_NAME}
+add_library(${PROJECT_NAME}
     main.c
 )
-
 target_link_libraries(${PROJECT_NAME}
     PRIVATE g2l::log
     PRIVATE g2l::uart
+    PRIVATE g2l::main
 )
+
+g2l_idf_build(${PROJECT_NAME})

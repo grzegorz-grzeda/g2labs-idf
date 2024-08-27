@@ -20,22 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-get_property(__g2l_idf_env_set GLOBAL PROPERTY __G2L_IDF_ENV_SET)
 
-if(NOT __g2l_idf_env_set)
-    add_library(__g2l_idf_build_target STATIC IMPORTED GLOBAL)
+include($ENV{IDF_PATH}/tools/cmake/idf.cmake)
 
-    include(${CMAKE_CURRENT_LIST_DIR}/utilities.cmake)
-    include(${CMAKE_CURRENT_LIST_DIR}/build.cmake)
-    include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
 
-    if(NOT DEFINED G2L_IDF_TARGET_PLATFORM)
-        message(FATAL_ERROR "G2L_IDF_TARGET_PLATFORM is not defined - please specify it in your CMakeLists.txt or toolchain file")
-    else()
-        message(STATUS "G2L IDF: Toolchain: ${CMAKE_TOOLCHAIN_FILE}")
-        message(STATUS "G2L IDF: Platform: ${G2L_IDF_TARGET_PLATFORM}")
-        message(STATUS "G2L IDF: Platform variant: ${G2L_IDF_TARGET_PLATFORM_VARIANT}")
-    endif()
+function(platform_build executable)
+    idf_build_process("${ESP_TARGET}"
+    COMPONENTS
+    freertos
+    esptool_py
+    )
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-    set_property(GLOBAL PROPERTY __G2L_IDF_ENV_SET 1)
-endif()
+    target_link_libraries(${executable} PRIVATE idf::freertos idf::esp_common)
+
+    idf_build_executable(${executable})
+endfunction()

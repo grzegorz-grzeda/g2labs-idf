@@ -21,3 +21,4 @@
 # SOFTWARE.
 add_subdirectory(g2l-log)
 add_subdirectory(g2l-uart)
+add_subdirectory(g2l-main)

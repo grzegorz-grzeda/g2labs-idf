@@ -38,6 +38,7 @@ project(g2labs-idf
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     include(${CMAKE_CURRENT_LIST_DIR}/cmake/g2l-idf.cmake)
     message(STATUS "Adding code examples")
+
     add_subdirectory(examples)
 endif()
 
