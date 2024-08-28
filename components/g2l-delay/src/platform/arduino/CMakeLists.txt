@@ -22,3 +22,7 @@
 target_sources(${PROJECT_NAME}
     PRIVATE g2l-delay.c
 )
+
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE __DELAY_BACKWARD_COMPATIBLE__
+)
