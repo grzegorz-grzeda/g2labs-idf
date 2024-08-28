@@ -33,6 +33,8 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE g2l::main
     PRIVATE g2l::delay
     PRIVATE g2l::gpio
+    PRIVATE g2l::ws28xx
+    PRIVATE g2l::color-manipulation
 )
 
 g2l_idf_build(${PROJECT_NAME})

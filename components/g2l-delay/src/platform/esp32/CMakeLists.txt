@@ -22,3 +22,7 @@
 target_sources(${PROJECT_NAME}
     PRIVATE g2l-delay.c
 )
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE idf::freertos
+)
