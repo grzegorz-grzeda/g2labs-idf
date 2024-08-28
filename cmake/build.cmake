@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-include(${CMAKE_CURRENT_LIST_DIR}/platforms/${G2L_IDF_TARGET_PLATFORM}/platform-init.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/platforms/platform-init.cmake)
 
 function(g2l_idf_build executable)
     target_link_libraries(${executable} PRIVATE g2l::main)

@@ -21,18 +21,13 @@
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.25)
 
-project(hello-world)
-include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
-
-add_executable(${PROJECT_NAME}
-    main.c
-)
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE g2l::log
-    PRIVATE g2l::uart
-    PRIVATE g2l::main
-    PRIVATE g2l::delay
-    PRIVATE g2l::gpio
+project(g2l-gpio
+    VERSION 0.0.1
+    DESCRIPTION "G2Labs General Purpose Input/Output Library"
+    LANGUAGES C
 )
 
-g2l_idf_build(${PROJECT_NAME})
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::gpio ALIAS g2l-gpio)
+
+add_subdirectory(src)

@@ -8,7 +8,7 @@ set(CMAKE_AR avr-ar)
 set(CMAKE_OBJCOPY avr-objcopy)
 set(CMAKE_OBJDUMP avr-objdump)
 
-set(CMAKE_C_FLAGS "-mmcu=atmega328p -Os")
+set(CMAKE_C_FLAGS "-mmcu=atmega328p -Os -DF_CPU=16000000")
 set(CMAKE_CXX_FLAGS "-mmcu=atmega328p -Os")
 set(CMAKE_ASM_FLAGS "-mmcu=atmega328p")
 
