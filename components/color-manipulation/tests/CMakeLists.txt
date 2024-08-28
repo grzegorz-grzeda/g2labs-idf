@@ -19,4 +19,4 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-atomic_tests_add(test-color-manipulation test-color-manipulation.c color-manipulation)
+g2l_idf_add_test(test-color-manipulation test-color-manipulation.c color-manipulation)

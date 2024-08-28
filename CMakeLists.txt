@@ -35,6 +35,8 @@ project(g2labs-idf
     DESCRIPTION "G2 Labs IoT Development Framework"
     LANGUAGES C CXX ASM)
 
+enable_testing()
+
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     include(${CMAKE_CURRENT_LIST_DIR}/cmake/g2l-idf.cmake)
     message(STATUS "Adding code examples")
