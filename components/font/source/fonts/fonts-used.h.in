@@ -1,0 +1,17 @@
+/**
+ * Copyright (C) G2Labs Grzegorz Grzęda - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Grzegorz Grzęda <grzegorz.grzeda@g2labs.pl>, 03.2023
+ */
+#ifndef FONTS_USED_H
+#define FONTS_USED_H
+
+#include "font.h"
+
+#cmakedefine FONT_USE_3X5
+#cmakedefine FONT_USE_4X6
+#cmakedefine FONT_USE_6X8
+#cmakedefine FONT_USE_24X32
+
+#endif  // FONTS_USED_H
