@@ -26,4 +26,6 @@ enable_testing()
 project(timer LANGUAGES C VERSION 1.0.0)
 add_library(${PROJECT_NAME} STATIC)
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE TIMER_ENTRIES_MAX_COUNT=10)
+
 add_subdirectory(source)
