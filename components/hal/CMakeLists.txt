@@ -22,3 +22,4 @@
 add_subdirectory(g2l-hal-gpio)
 add_subdirectory(g2l-hal-spi)
 add_subdirectory(g2l-hal-ws28xx)
+add_subdirectory(g2l-hal-wifi)

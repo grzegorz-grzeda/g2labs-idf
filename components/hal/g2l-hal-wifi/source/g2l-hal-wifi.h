@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Grzegorz Grzęda
+ * Copyright (c) 2023 G2Labs Grzegorz Grzęda
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifndef G2L_HAL_WIFI_H
+#define G2L_HAL_WIFI_H
 
-#include "esp_err.h"
-#include "esp_event.h"
-#include "esp_netif.h"
-#include "nvs_flash.h"
+#include <stdbool.h>
 
-#define APPLICATION_NAME "application"
+typedef void (*g2l_hal_wifi_state_handler_t)(bool is_connected);
 
-extern int main(int argc, char** argv);
+void g2l_hal_wifi_set_on_connected_handler(
+    g2l_hal_wifi_state_handler_t on_connected);
 
-static void initialize(void) {
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
-        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-}
+void g2l_hal_wifi_set_on_disconnected_handler(
+    g2l_hal_wifi_state_handler_t on_disconnected);
 
-void app_main(void) {
-    initialize();
+void g2l_hal_wifi_set(const char* ssid, const char* password);
 
-    char* args[] = {(char*)APPLICATION_NAME};
-    main(1, args);
-    while (1)
-        ;
-}
+void g2l_hal_wifi_connect(void);
+
+void g2l_hal_wifi_disconnect(void);
+
+#endif  // G2L_HAL_WIFI_H

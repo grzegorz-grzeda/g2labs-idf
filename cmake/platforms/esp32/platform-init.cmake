@@ -29,6 +29,8 @@ function(platform_build executable)
         freertos
         esptool_py
         driver
+        esp_wifi
+        nvs_flash
         SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
     )
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

@@ -5,6 +5,8 @@
 #include "g2l-log.h"
 #include "g2l-uart.h"
 
+#define TAG "hello-world"
+
 #define STATUS_LED (2)
 #define WS28XX_LED_PIN (16)
 #define WS28XX_LED_COUNT (16)
@@ -27,7 +29,7 @@ static void led_animate(void) {
     hue %= 360;
 }
 
-int main() {
+int main(int argc, char** argv) {
     g2l_uart_init(9600);
     g2l_uart_register_stdout();
 
@@ -37,7 +39,10 @@ int main() {
     g2l_hal_gpio_configure_output(STATUS_LED, state, false);
 
     char message[] = "Hello, World!";
-    I("main", "Sending: %s", message);
+    I(TAG, "Sending: %s", message);
+    for (int i = 0; i < argc; i++) {
+        I(TAG, "Arg %d: %s", i, argv[i]);
+    }
     while (1) {
         state = !state;
         g2l_hal_gpio_update_output(STATUS_LED, state);
