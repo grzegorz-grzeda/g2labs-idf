@@ -26,7 +26,7 @@
 #include "driver/spi_master.h"
 #include "g2l-log.h"
 
-#define TAG "G2L-SPI"
+#define TAG "G2L-HAL-SPI"
 #define G2L_HAL_SPI_HOST_COUNT (2)
 
 typedef struct g2l_hal_spi {

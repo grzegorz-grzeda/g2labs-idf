@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-spi.h"
+#include "g2l-hal-spi.h"
 
 typedef struct g2l_hal_spi {
 } g2l_hal_spi_t;

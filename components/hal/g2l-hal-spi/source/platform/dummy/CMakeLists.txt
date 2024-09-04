@@ -21,5 +21,5 @@
 # SOFTWARE.
 #
 target_sources(${PROJECT_NAME}
-    PRIVATE g2labs-platform-spi.c
+    PRIVATE g2l-hal-spi.c
 )
