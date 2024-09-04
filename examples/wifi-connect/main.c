@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "cli.h"
-#include "g2l-delay.h"
 #include "g2l-hal-uart.h"
 #include "g2l-hal-wifi.h"
 #include "g2l-log.h"
+#include "g2l-os-delay.h"
 
 #define TAG "wifi-connect"
 
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
         I(TAG, "Arg %d: %s", i, argv[i]);
     }
     while (1) {
-        g2l_delay_ms(20);
+        g2l_os_delay_ms(100);
     }
     return 0;
 }

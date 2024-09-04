@@ -21,13 +21,13 @@
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.25)
 
-project(g2l-delay
+project(g2l-os-delay
     VERSION 0.0.1
-    DESCRIPTION "G2Labs Delay Library"
+    DESCRIPTION "G2Labs OS Delay"
     LANGUAGES C
 )
 
 add_library(${PROJECT_NAME} STATIC)
-add_library(g2l::delay ALIAS g2l-delay)
+add_library(g2l::os::delay ALIAS ${PROJECT_NAME})
 
 add_subdirectory(src)

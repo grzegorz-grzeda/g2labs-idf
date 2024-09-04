@@ -30,9 +30,9 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE g2l::log
     PRIVATE g2l::hal::uart
-    PRIVATE g2l::main
-    PRIVATE g2l::delay
     PRIVATE g2l::hal::wifi
+    PRIVATE g2l::os::delay
+    PRIVATE g2l::main
     PRIVATE cli
 )
 

@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-delay.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#ifndef G2L_OS_DELAY_H
+#define G2L_OS_DELAY_H
 
-void g2l_delay_ms(uint32_t ms) {
-    vTaskDelay(ms / portTICK_PERIOD_MS);
-}
+#include <stdint.h>
+
+void g2l_os_delay_ms(uint32_t ms);
+
+#endif  // G2L_OS_DELAY_H

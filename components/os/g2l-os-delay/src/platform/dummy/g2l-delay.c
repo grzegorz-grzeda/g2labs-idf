@@ -21,6 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-delay.h"
+#include "g2l-os-delay.h"
 
-void g2l_delay_ms(uint32_t ms) {}
+void g2l_os_delay_ms(uint32_t ms) {}
