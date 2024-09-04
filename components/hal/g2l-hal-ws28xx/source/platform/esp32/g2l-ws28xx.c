@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-ws28xx.h"
 #include <stddef.h>
 #include <stdint.h>
 #include "driver/rmt_tx.h"
+#include "g2l-hal-ws28xx.h"
 
 #define RMT_LED_STRIP_RESOLUTION_HZ (10000000)
 #define RMT_BLOCK_SIZE (64)
@@ -69,7 +69,8 @@ static size_t rmt_encode_led_strip(rmt_encoder_t* encoder,
                                    const void* primary_data,
                                    size_t data_size,
                                    rmt_encode_state_t* ret_state) {
-    rmt_led_strip_encoder_t* led_encoder = __containerof(encoder, rmt_led_strip_encoder_t, base);
+    rmt_led_strip_encoder_t* led_encoder =
+        __containerof(encoder, rmt_led_strip_encoder_t, base);
     rmt_encoder_handle_t bytes_encoder = led_encoder->bytes_encoder;
     rmt_encoder_handle_t copy_encoder = led_encoder->copy_encoder;
     rmt_encode_state_t session_state = 0;
@@ -77,7 +78,9 @@ static size_t rmt_encode_led_strip(rmt_encoder_t* encoder,
     size_t encoded_symbols = 0;
     switch (led_encoder->state) {
         case RMT_STATE_SEND_DATA:
-            encoded_symbols += bytes_encoder->encode(bytes_encoder, channel, primary_data, data_size, &session_state);
+            encoded_symbols +=
+                bytes_encoder->encode(bytes_encoder, channel, primary_data,
+                                      data_size, &session_state);
             if (session_state & RMT_ENCODING_COMPLETE) {
                 led_encoder->state = RMT_STATE_SEND_RESET;
             }
@@ -87,8 +90,9 @@ static size_t rmt_encode_led_strip(rmt_encoder_t* encoder,
             }
         // fall-through
         case RMT_STATE_SEND_RESET:
-            encoded_symbols += copy_encoder->encode(copy_encoder, channel, &led_encoder->reset_code,
-                                                    sizeof(led_encoder->reset_code), &session_state);
+            encoded_symbols += copy_encoder->encode(
+                copy_encoder, channel, &led_encoder->reset_code,
+                sizeof(led_encoder->reset_code), &session_state);
             if (session_state & RMT_ENCODING_COMPLETE) {
                 led_encoder->state = RMT_STATE_SEND_DATA;
                 state |= RMT_ENCODING_COMPLETE;
@@ -104,7 +108,8 @@ out:
 }
 
 static esp_err_t rmt_del_led_strip_encoder(rmt_encoder_t* encoder) {
-    rmt_led_strip_encoder_t* led_encoder = __containerof(encoder, rmt_led_strip_encoder_t, base);
+    rmt_led_strip_encoder_t* led_encoder =
+        __containerof(encoder, rmt_led_strip_encoder_t, base);
     rmt_del_encoder(led_encoder->bytes_encoder);
     rmt_del_encoder(led_encoder->copy_encoder);
     free(led_encoder);
@@ -112,7 +117,8 @@ static esp_err_t rmt_del_led_strip_encoder(rmt_encoder_t* encoder) {
 }
 
 static esp_err_t rmt_led_strip_encoder_reset(rmt_encoder_t* encoder) {
-    rmt_led_strip_encoder_t* led_encoder = __containerof(encoder, rmt_led_strip_encoder_t, base);
+    rmt_led_strip_encoder_t* led_encoder =
+        __containerof(encoder, rmt_led_strip_encoder_t, base);
     rmt_encoder_reset(led_encoder->bytes_encoder);
     rmt_encoder_reset(led_encoder->copy_encoder);
     led_encoder->state = 0;
@@ -123,7 +129,8 @@ static esp_err_t rmt_new_led_strip_encoder(rmt_encoder_handle_t* ret_encoder) {
     if (!ret_encoder) {
         return ESP_FAIL;
     }
-    rmt_led_strip_encoder_t* led_encoder = calloc(1, sizeof(rmt_led_strip_encoder_t));
+    rmt_led_strip_encoder_t* led_encoder =
+        calloc(1, sizeof(rmt_led_strip_encoder_t));
     if (!led_encoder) {
         return ESP_FAIL;
     }
@@ -147,11 +154,13 @@ static esp_err_t rmt_new_led_strip_encoder(rmt_encoder_handle_t* ret_encoder) {
             },
         .flags.msb_first = RMT_LED_ENDIANESS,
     };
-    if (rmt_new_bytes_encoder(&bytes_encoder_config, &led_encoder->bytes_encoder) != ESP_OK) {
+    if (rmt_new_bytes_encoder(&bytes_encoder_config,
+                              &led_encoder->bytes_encoder) != ESP_OK) {
         goto err;
     }
     rmt_copy_encoder_config_t copy_encoder_config = {};
-    if (rmt_new_copy_encoder(&copy_encoder_config, &led_encoder->copy_encoder)) {
+    if (rmt_new_copy_encoder(&copy_encoder_config,
+                             &led_encoder->copy_encoder)) {
         goto err;
     }
     led_encoder->reset_code = (rmt_symbol_word_t){
@@ -179,10 +188,11 @@ static void transmit_buffer_to_leds(void) {
     rmt_transmit_config_t tx_config = {
         .loop_count = 0,  // no transfer loop
     };
-    rmt_transmit(led_chan, led_encoder, led_buffer, led_buffer_size, &tx_config);
+    rmt_transmit(led_chan, led_encoder, led_buffer, led_buffer_size,
+                 &tx_config);
 }
 
-void g2l_ws28xx_initialize(uint8_t pin, size_t led_count) {
+void g2l_hal_ws28xx_initialize(uint8_t pin, size_t led_count) {
     led_buffer = calloc(led_count * COLOR_COMPONENT_COUNT, sizeof(uint8_t));
     if (!led_buffer) {
         return;
@@ -203,14 +213,20 @@ void g2l_ws28xx_initialize(uint8_t pin, size_t led_count) {
     transmit_buffer_to_leds();
 }
 
-static void set_buffer_led_value(size_t led_number, uint8_t red, uint8_t green, uint8_t blue) {
+static void set_buffer_led_value(size_t led_number,
+                                 uint8_t red,
+                                 uint8_t green,
+                                 uint8_t blue) {
     size_t index = led_number * COLOR_COMPONENT_COUNT;
     led_buffer[index + COLOR_RED_IN_BUFFER_OFFSET] = red;
     led_buffer[index + COLOR_GREEN_IN_BUFFER_OFFSET] = green;
     led_buffer[index + COLOR_BLUE_IN_BUFFER_OFFSET] = blue;
 }
 
-void g2l_ws28xx_set_led_color(size_t led_number, uint8_t red, uint8_t green, uint8_t blue) {
+void g2l_hal_ws28xx_set_led_color(size_t led_number,
+                                  uint8_t red,
+                                  uint8_t green,
+                                  uint8_t blue) {
     if (led_number >= total_led_count) {
         return;
     }
@@ -218,7 +234,9 @@ void g2l_ws28xx_set_led_color(size_t led_number, uint8_t red, uint8_t green, uin
     transmit_buffer_to_leds();
 }
 
-void g2l_ws28xx_set_every_led_color(uint8_t red, uint8_t green, uint8_t blue) {
+void g2l_hal_ws28xx_set_every_led_color(uint8_t red,
+                                        uint8_t green,
+                                        uint8_t blue) {
     for (size_t i = 0; i < total_led_count; i++) {
         set_buffer_led_value(i, red, green, blue);
     }

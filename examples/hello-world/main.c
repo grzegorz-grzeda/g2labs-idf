@@ -1,9 +1,9 @@
 #include "color-manipulation.h"
 #include "g2l-delay.h"
 #include "g2l-hal-gpio.h"
+#include "g2l-hal-ws28xx.h"
 #include "g2l-log.h"
 #include "g2l-uart.h"
-#include "g2l-ws28xx.h"
 
 #define STATUS_LED (2)
 #define WS28XX_LED_PIN (16)
@@ -21,7 +21,7 @@ static void led_animate(void) {
             .value = WS28XX_LED_VALUE,
         };
         color_rgb_t rgb = convert_color_hsv_to_rgb(hsv);
-        g2l_ws28xx_set_led_color(i, rgb.red, rgb.green, rgb.blue);
+        g2l_hal_ws28xx_set_led_color(i, rgb.red, rgb.green, rgb.blue);
     }
     hue += 1;
     hue %= 360;
@@ -31,7 +31,7 @@ int main() {
     g2l_uart_init(9600);
     g2l_uart_register_stdout();
 
-    g2l_ws28xx_initialize(WS28XX_LED_PIN, WS28XX_LED_COUNT);
+    g2l_hal_ws28xx_initialize(WS28XX_LED_PIN, WS28XX_LED_COUNT);
 
     bool state = false;
     g2l_hal_gpio_configure_output(STATUS_LED, state, false);

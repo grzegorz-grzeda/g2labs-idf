@@ -23,8 +23,8 @@
 cmake_minimum_required(VERSION 3.22)
 enable_testing()
 
-project(g2l-ws28xx LANGUAGES C VERSION 1.0.0)
+project(g2l-hal-ws28xx LANGUAGES C VERSION 1.0.0)
 add_library(${PROJECT_NAME} STATIC)
-add_library(g2l::ws28xx ALIAS ${PROJECT_NAME})
+add_library(g2l::hal::ws28xx ALIAS ${PROJECT_NAME})
 
 add_subdirectory(source)

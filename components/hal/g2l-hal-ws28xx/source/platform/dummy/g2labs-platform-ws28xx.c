@@ -21,16 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_IDF_WS28XX_H
-#define G2L_IDF_WS28XX_H
+#include "g2l-hal-ws28xx.h"
 
-#include <stddef.h>
-#include <stdint.h>
+void g2l_hal_ws28xx_initialize(uint8_t pin, size_t led_count) {}
 
-void g2l_ws28xx_initialize(uint8_t pin, size_t led_count);
+void g2l_hal_ws28xx_set_led_color(size_t led_number,
+                                  uint8_t red,
+                                  uint8_t green,
+                                  uint8_t blue) {}
 
-void g2l_ws28xx_set_led_color(size_t led_number, uint8_t red, uint8_t green, uint8_t blue);
-
-void g2l_ws28xx_set_every_led_color(uint8_t red, uint8_t green, uint8_t blue);
-
-#endif  // G2L_IDF_WS28XX_H
+void g2l_hal_ws28xx_set_every_led_color(uint8_t red,
+                                        uint8_t green,
+                                        uint8_t blue) {}
