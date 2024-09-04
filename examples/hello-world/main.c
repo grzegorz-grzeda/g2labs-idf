@@ -11,7 +11,7 @@
 #define WS28XX_LED_PIN (16)
 #define WS28XX_LED_COUNT (16)
 #define WS28XX_LED_SATURATION (100)
-#define WS28XX_LED_VALUE (20)
+#define WS28XX_LED_VALUE (10)
 
 static void led_animate(void) {
     static uint16_t hue = 0;
