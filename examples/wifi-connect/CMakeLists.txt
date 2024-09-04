@@ -19,11 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-target_sources(${PROJECT_NAME}
-    PRIVATE g2l-uart.c
+cmake_minimum_required(VERSION 3.25)
+
+project(wifi-connect)
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
+
+add_executable(${PROJECT_NAME}
+    main.c
+)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::log
+    PRIVATE g2l::hal::uart
+    PRIVATE g2l::main
+    PRIVATE g2l::delay
+    PRIVATE g2l::hal::wifi
+    PRIVATE cli
 )
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE idf::driver
-    PRIVATE idf::freertos
-)
+g2l_idf_build(${PROJECT_NAME})

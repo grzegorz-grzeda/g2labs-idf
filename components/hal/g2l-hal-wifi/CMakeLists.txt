@@ -23,7 +23,8 @@
 cmake_minimum_required(VERSION 3.22)
 enable_testing()
 
-project(g2labs-platform-wifi LANGUAGES C VERSION 1.0.0)
+project(g2l-hal-wifi LANGUAGES C VERSION 1.0.0)
 add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::hal::wifi ALIAS ${PROJECT_NAME})
 
 add_subdirectory(source)

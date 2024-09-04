@@ -21,13 +21,13 @@
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.25)
 
-project(g2l-uart
+project(g2l-hal-uart
     VERSION 0.0.1
     DESCRIPTION "G2Labs UART"
     LANGUAGES C
 )
 
 add_library(${PROJECT_NAME} STATIC)
-add_library(g2l::uart ALIAS g2l-uart)
+add_library(g2l::hal::uart ALIAS ${PROJECT_NAME})
 
 add_subdirectory(src)

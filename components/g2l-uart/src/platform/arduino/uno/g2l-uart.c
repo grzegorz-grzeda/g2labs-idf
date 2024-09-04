@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-uart.h"
 #include <avr/io.h>
 #include <stdio.h>
+#include "g2l-hal-uart.h"
 
 static int uart_send(char c, FILE* stream) {
     // Wait for empty transmit buffer
@@ -35,7 +35,8 @@ static int uart_send(char c, FILE* stream) {
 
 static FILE uart_output = FDEV_SETUP_STREAM(uart_send, NULL, _FDEV_SETUP_WRITE);
 
-void g2l_uart_init(int baud_rate) {
+void g2l_hal_uart_init(int baud_rate, g2l_hal_uart_receive_handler_t handler) {
+    (void)handler;
     // Set baud rate to 9600
     UBRR0H = (unsigned char)(103 >> 8);
     UBRR0L = (unsigned char)103;
@@ -47,6 +48,6 @@ void g2l_uart_init(int baud_rate) {
     UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
 }
 
-void g2l_uart_register_stdout(void) {
+void g2l_hal_uart_register_stdout(void) {
     stdout = &uart_output;
 }

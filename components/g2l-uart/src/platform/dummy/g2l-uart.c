@@ -21,10 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-uart.h"
+#include "g2l-hal-uart.h"
 
-void g2l_uart_init(int baud_rate) {
-    (void)baud_rate;
+void g2l_hal_uart_initialize(uint32_t baudrate,
+                             g2l_hal_uart_receive_handler_t handler) {
+    (void)baudrate;
+    (void)handler;
 }
 
-void g2l_uart_register_stdout(void) {}
+void g2l_hal_uart_send_data(const uint8_t* data, size_t size) {
+    printf("%.*s", (int)size, (const char*)data);
+}
+
+void g2l_hal_uart_register_stdout(void) {}

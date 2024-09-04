@@ -23,9 +23,17 @@
  */
 #ifndef G2L_IDF_UART_H
 #define G2L_IDF_UART_H
+#include <stddef.h>
+#include <stdint.h>
 
-void g2l_uart_init(int baud_rate);
+typedef void (*g2l_hal_uart_receive_handler_t)(const uint8_t* data,
+                                               size_t size);
 
-void g2l_uart_register_stdout(void);
+void g2l_hal_uart_initialize(uint32_t baudrate,
+                             g2l_hal_uart_receive_handler_t handler);
+
+void g2l_hal_uart_send_data(const uint8_t* data, size_t size);
+
+void g2l_hal_uart_register_stdout(void);
 
 #endif  // G2L_IDF_UART_H
