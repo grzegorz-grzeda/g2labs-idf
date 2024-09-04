@@ -19,7 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+cmake_minimum_required(VERSION 3.25)
 
-# add_subdirectory(hello-world)
-# add_subdirectory(wifi-connect)
-add_subdirectory(threads)
+project(g2l-os-thread
+    VERSION 0.0.1
+    DESCRIPTION "G2Labs OS Thread"
+    LANGUAGES C
+)
+
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::os::thread ALIAS ${PROJECT_NAME})
+
+add_subdirectory(src)

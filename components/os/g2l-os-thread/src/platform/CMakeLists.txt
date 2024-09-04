@@ -19,7 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-# add_subdirectory(hello-world)
-# add_subdirectory(wifi-connect)
-add_subdirectory(threads)
+if((DEFINED G2L_IDF_TARGET_PLATFORM) AND(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${G2L_IDF_TARGET_PLATFORM}))
+    add_subdirectory(${G2L_IDF_TARGET_PLATFORM})
+else()
+    add_subdirectory(dummy)
+endif()
