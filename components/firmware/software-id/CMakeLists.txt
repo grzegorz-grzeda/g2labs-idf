@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2024 Grzegorz Grzęda
+# Copyright (c) 2023 G2Labs Grzegorz Grzęda
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,23 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_subdirectory(hal)
-add_subdirectory(os)
-add_subdirectory(adapters)
-add_subdirectory(devices)
-add_subdirectory(containers)
-add_subdirectory(debug)
-add_subdirectory(firmware)
-add_subdirectory(g2l-main)
-add_subdirectory(color-manipulation)
-add_subdirectory(event-handler)
-add_subdirectory(cli)
-add_subdirectory(timer)
-add_subdirectory(generic-controller)
-add_subdirectory(generic-display)
-add_subdirectory(font)
-add_subdirectory(user-screen)
-add_subdirectory(uuid)
-add_subdirectory(stream-server)
-add_subdirectory(encodings)
-add_subdirectory(divulge)
+#
+cmake_minimum_required(VERSION 3.22)
+enable_testing()
+
+project(software-id)
+add_library(${PROJECT_NAME} STATIC)
+
+add_subdirectory(source)
+
+target_link_libraries(${PROJECT_NAME}
+        PUBLIC uuid
+)
