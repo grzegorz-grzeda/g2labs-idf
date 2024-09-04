@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_IDF_GPIO_H
-#define G2L_IDF_GPIO_H
+#ifndef G2L_HAL_GPIO_H
+#define G2L_HAL_GPIO_H
 
 #include <stdbool.h>
 #include <stdint.h>
 
 /**
- * @defgroup g2l-gpio Platform GPIO
+ * @defgroup g2l-hal-gpio G2Labs HAL GPIO
  * @brief Platform specific code for handling general purpose input and output
  * pins.
  * @{
@@ -37,14 +37,14 @@
 /**
  * @brief Input edge detection configuration
  */
-typedef enum g2l_gpio_edge_detect {
+typedef enum g2l_hal_gpio_edge_detect {
     PLATFORM_GPIO_INPUT_EDGE_DETECT_RISING,  /**< Detect input rising state. */
     PLATFORM_GPIO_INPUT_EDGE_DETECT_FALLING, /**< Detect input falling state. */
     PLATFORM_GPIO_INPUT_EDGE_DETECT_ANY,    /**< Detect either rising or falling
                                                input state. */
     _PLATFORM_GPIO_INPUT_EDGE_DETECT_COUNT, /**< Edge detection options count.
                                              */
-} g2l_gpio_input_edge_detect_t;
+} g2l_hal_gpio_input_edge_detect_t;
 
 /**
  * @brief GPIO input handler type
@@ -52,7 +52,7 @@ typedef enum g2l_gpio_edge_detect {
  * This is a callback pointer.
  * @param[in] number Number of input pin, on which the registered event occoured
  */
-typedef void (*g2l_gpio_input_handler_t)(uint8_t number);
+typedef void (*g2l_hal_gpio_input_handler_t)(uint8_t number);
 
 /**
  * @brief Initialize g2l general purpose I/O
@@ -60,7 +60,7 @@ typedef void (*g2l_gpio_input_handler_t)(uint8_t number);
  * Initializes the internals of the g2l GPIO code.
  * @param[in] input_handler pointer to the GPIO input handler.
  */
-bool g2l_gpio_initialize(g2l_gpio_input_handler_t input_handler);
+bool g2l_hal_gpio_initialize(g2l_hal_gpio_input_handler_t input_handler);
 
 /**
  * @brief Configure g2l pin as general purpose input
@@ -70,9 +70,9 @@ bool g2l_gpio_initialize(g2l_gpio_input_handler_t input_handler);
  * @param[in] is_pull_up configure [or not] any pull up resistor to the pin
  * @param[in] edge_detect specify the edge detection configuration to respond to
  */
-bool g2l_gpio_configure_input(uint8_t number,
-                              bool is_pull_up,
-                              g2l_gpio_input_edge_detect_t edge_detect);
+bool g2l_hal_gpio_configure_input(uint8_t number,
+                                  bool is_pull_up,
+                                  g2l_hal_gpio_input_edge_detect_t edge_detect);
 
 /**
  * @brief Configure g2l pin as general purpose output
@@ -82,9 +82,9 @@ bool g2l_gpio_configure_input(uint8_t number,
  * @param[in] init_state initial state to apply to output pin
  * @param[in] is_pull_up configure [or not] any pull up resistor to the pin
  */
-bool g2l_gpio_configure_output(uint8_t number,
-                               bool init_state,
-                               bool is_pull_up);
+bool g2l_hal_gpio_configure_output(uint8_t number,
+                                   bool init_state,
+                                   bool is_pull_up);
 
 /**
  * @brief Update g2l general purpose output
@@ -95,10 +95,10 @@ bool g2l_gpio_configure_output(uint8_t number,
  * @param[in] new_state new state to apply to output pin
  * @return @ref true pin state update was successfull
  */
-bool g2l_gpio_update_output(uint8_t number, bool new_state);
+bool g2l_hal_gpio_update_output(uint8_t number, bool new_state);
 
 /**
  * @}
  */
 
-#endif  // G2L_IDF_GPIO_H
+#endif  // G2L_HAL_GPIO_H

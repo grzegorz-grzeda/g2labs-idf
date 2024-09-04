@@ -1,6 +1,6 @@
 #include "color-manipulation.h"
 #include "g2l-delay.h"
-#include "g2l-gpio.h"
+#include "g2l-hal-gpio.h"
 #include "g2l-log.h"
 #include "g2l-uart.h"
 #include "g2l-ws28xx.h"
@@ -34,13 +34,13 @@ int main() {
     g2l_ws28xx_initialize(WS28XX_LED_PIN, WS28XX_LED_COUNT);
 
     bool state = false;
-    g2l_gpio_configure_output(STATUS_LED, state, false);
+    g2l_hal_gpio_configure_output(STATUS_LED, state, false);
 
     char message[] = "Hello, World!";
     I("main", "Sending: %s", message);
     while (1) {
         state = !state;
-        g2l_gpio_update_output(STATUS_LED, state);
+        g2l_hal_gpio_update_output(STATUS_LED, state);
         led_animate();
         g2l_delay_ms(20);
     }
