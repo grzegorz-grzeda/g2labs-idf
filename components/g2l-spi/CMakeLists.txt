@@ -30,5 +30,5 @@ add_library(g2l::spi ALIAS ${PROJECT_NAME})
 add_subdirectory(source)
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE g2labs-log
+    PRIVATE g2l::log
 )

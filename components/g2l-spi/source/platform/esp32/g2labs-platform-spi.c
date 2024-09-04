@@ -106,8 +106,8 @@ size_t g2l_spi_transmit(g2l_spi_device_t* device,
         .rxlength = rxsize * 8,
     };
     esp_err_t ret = spi_device_polling_transmit(device->device, &transaction);
-    TAG, "[NCSS:%u] Sent %lu, received %lu bytes", device->devcfg.spics_io_num,
-      size, rxsize);
+    D(TAG, "[NCSS:%u] Sent %lu, received %lu bytes",
+      device->devcfg.spics_io_num, size, rxsize);
     ESP_ERROR_CHECK(ret);
     return size;
 }

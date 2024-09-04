@@ -28,6 +28,7 @@ function(platform_build executable)
         COMPONENTS
         freertos
         esptool_py
+        driver
         SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
     )
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
