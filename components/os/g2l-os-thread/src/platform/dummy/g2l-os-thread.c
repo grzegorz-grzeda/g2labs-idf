@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 #include "g2l-os-thread.h"
+#include <stddef.h>
 
 g2l_os_thread_t* g2l_os_thread_create(const char* name,
                                       uint32_t stack_size,
