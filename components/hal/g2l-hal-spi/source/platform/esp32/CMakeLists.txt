@@ -21,9 +21,10 @@
 # SOFTWARE.
 #
 target_sources(${PROJECT_NAME}
-    PRIVATE g2labs-platform-spi.c
+    PRIVATE g2l-hal-spi.c
 )
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE idf::driver
+    PRIVATE g2l::log
 )

@@ -23,22 +23,23 @@
  */
 #include "g2l-spi.h"
 
-typedef struct g2l_spi {
-} g2l_spi_t;
+typedef struct g2l_hal_spi {
+} g2l_hal_spi_t;
 
-g2l_spi_t* g2l_spi_initialize(g2l_spi_configuration_t configuration) {
+g2l_hal_spi_t* g2l_hal_spi_initialize(
+    g2l_hal_spi_configuration_t configuration) {
     return NULL;
 }
 
-g2l_spi_device_t* g2l_spi_add_device(
-    g2l_spi_t* spi,
-    g2l_spi_device_configuration_t configuration) {
+g2l_hal_spi_device_t* g2l_hal_spi_add_device(
+    g2l_hal_spi_t* spi,
+    g2l_hal_spi_device_configuration_t configuration) {
     return NULL;
 }
 
-size_t g2l_spi_transmit(g2l_spi_device_t* device,
-                        const char* tx_buffer,
-                        char* rx_buffer,
-                        size_t size) {
+size_t g2l_hal_spi_transmit(g2l_hal_spi_device_t* device,
+                            const char* tx_buffer,
+                            char* rx_buffer,
+                            size_t size) {
     return 0;
 }

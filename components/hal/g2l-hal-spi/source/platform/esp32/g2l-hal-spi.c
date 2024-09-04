@@ -21,30 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "g2l-hal-spi.h"
 #include <stdlib.h>
 #include "driver/spi_master.h"
 #include "g2l-log.h"
-#include "g2l-spi.h"
 
 #define TAG "G2L-SPI"
+#define G2L_HAL_SPI_HOST_COUNT (2)
 
-typedef struct g2l_spi {
+typedef struct g2l_hal_spi {
     uint8_t host_id;
     spi_bus_config_t buscfg;
-} g2l_spi_t;
+} g2l_hal_spi_t;
 
-typedef struct g2l_spi_device {
-    g2l_spi_t* spi;
+typedef struct g2l_hal_spi_device {
+    g2l_hal_spi_t* spi;
     spi_device_handle_t device;
     spi_device_interface_config_t devcfg;
-} g2l_spi_device_t;
+} g2l_hal_spi_device_t;
 
-uint8_t g2l_spi_get_host_count(void) {
-    return 2;
+uint8_t g2l_hal_spi_get_host_count(void) {
+    return G2L_HAL_SPI_HOST_COUNT;
 }
 
-g2l_spi_t* g2l_spi_initialize(g2l_spi_configuration_t configuration) {
-    g2l_spi_t* spi = calloc(1, sizeof(*spi));
+g2l_hal_spi_t* g2l_hal_spi_initialize(
+    g2l_hal_spi_configuration_t configuration) {
+    g2l_hal_spi_t* spi = calloc(1, sizeof(*spi));
     if (!spi) {
         return NULL;
     }
@@ -65,13 +67,13 @@ g2l_spi_t* g2l_spi_initialize(g2l_spi_configuration_t configuration) {
     return spi;
 }
 
-g2l_spi_device_t* g2l_spi_add_device(
-    g2l_spi_t* spi,
-    g2l_spi_device_configuration_t configuration) {
+g2l_hal_spi_device_t* g2l_hal_spi_add_device(
+    g2l_hal_spi_t* spi,
+    g2l_hal_spi_device_configuration_t configuration) {
     if (!spi) {
         return NULL;
     }
-    g2l_spi_device_t* device = calloc(1, sizeof(*device));
+    g2l_hal_spi_device_t* device = calloc(1, sizeof(*device));
     if (!device) {
         return NULL;
     }
@@ -91,10 +93,10 @@ g2l_spi_device_t* g2l_spi_add_device(
     return device;
 }
 
-size_t g2l_spi_transmit(g2l_spi_device_t* device,
-                        const char* tx_buffer,
-                        char* rx_buffer,
-                        size_t size) {
+size_t g2l_hal_spi_transmit(g2l_hal_spi_device_t* device,
+                            const char* tx_buffer,
+                            char* rx_buffer,
+                            size_t size) {
     if (!device || !tx_buffer || !size) {
         return 0;
     }

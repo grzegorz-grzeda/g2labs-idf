@@ -19,47 +19,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2LABS_PLATFORM_SPI_H
-#define G2LABS_PLATFORM_SPI_H
+#ifndef G2L_HAL_SPI_H
+#define G2L_HAL_SPI_H
 
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct g2l_spi g2l_spi_t;
+typedef struct g2l_hal_spi g2l_hal_spi_t;
 
-typedef struct g2l_spi_device g2l_spi_device_t;
+typedef struct g2l_hal_spi_device g2l_hal_spi_device_t;
 
-typedef enum g2l_spi_mode {
+typedef enum g2l_hal_spi_mode {
     PLATFORM_SPI_MODE_0 = 0,
     PLATFORM_SPI_MODE_1,
     PLATFORM_SPI_MODE_2,
     PLATFORM_SPI_MODE_3,
-} g2l_spi_mode_t;
+} g2l_hal_spi_mode_t;
 
-typedef struct g2l_spi_configuration {
+typedef struct g2l_hal_spi_configuration {
     uint8_t host_id;
     uint8_t mosi_pin;
     uint8_t miso_pin;
     uint8_t sclk_pin;
-} g2l_spi_configuration_t;
+} g2l_hal_spi_configuration_t;
 
-typedef struct g2l_spi_device_configuration {
+typedef struct g2l_hal_spi_device_configuration {
     uint32_t clock_frequency_hz;
-    g2l_spi_mode_t mode;
+    g2l_hal_spi_mode_t mode;
     uint8_t ncss_pin;
-} g2l_spi_device_configuration_t;
+} g2l_hal_spi_device_configuration_t;
 
-uint8_t g2l_spi_get_host_count(void);
+uint8_t g2l_hal_spi_get_host_count(void);
 
-g2l_spi_t* g2l_spi_initialize(g2l_spi_configuration_t configuration);
+g2l_hal_spi_t* g2l_hal_spi_initialize(
+    g2l_hal_spi_configuration_t configuration);
 
-g2l_spi_device_t* g2l_spi_add_device(
-    g2l_spi_t* spi,
-    g2l_spi_device_configuration_t configuration);
+g2l_hal_spi_device_t* g2l_hal_spi_add_device(
+    g2l_hal_spi_t* spi,
+    g2l_hal_spi_device_configuration_t configuration);
 
-size_t g2l_spi_transmit(g2l_spi_device_t* device,
-                        const char* tx_buffer,
-                        char* rx_buffer,
-                        size_t size);
+size_t g2l_hal_spi_transmit(g2l_hal_spi_device_t* device,
+                            const char* tx_buffer,
+                            char* rx_buffer,
+                            size_t size);
 
-#endif  // G2LABS_PLATFORM_SPI_H
+#endif  // G2L_HAL_SPI_H
