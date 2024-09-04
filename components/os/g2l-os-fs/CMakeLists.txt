@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2024 Grzegorz Grzęda
+# Copyright (c) 2023 G2Labs Grzegorz Grzęda
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -9,8 +9,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,7 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_subdirectory(g2l-os-delay)
-add_subdirectory(g2l-os-thread)
-add_subdirectory(g2l-os-mutex)
-add_subdirectory(g2l-os-fs)
+#
+cmake_minimum_required(VERSION 3.22)
+enable_testing()
+
+project(g2l-os-fs LANGUAGES C VERSION 1.0.0)
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::os::fs ALIAS ${PROJECT_NAME})
+
+add_subdirectory(source)
