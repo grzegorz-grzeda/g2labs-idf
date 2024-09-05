@@ -19,8 +19,18 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+cmake_minimum_required(VERSION 3.25)
 
-# add_subdirectory(hello-world)
-# add_subdirectory(wifi-connect)
-# add_subdirectory(threads)
-add_subdirectory(storage)
+project(storage)
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
+
+add_executable(${PROJECT_NAME}
+    main.c
+)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::os::delay
+    PRIVATE g2l::os::fs
+    PRIVATE g2l::main
+)
+
+g2l_idf_build(${PROJECT_NAME})

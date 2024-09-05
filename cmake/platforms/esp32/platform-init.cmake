@@ -23,14 +23,24 @@
 
 include($ENV{IDF_PATH}/tools/cmake/idf.cmake)
 
+set(ESP32_PARTITION_TABLE_OFFSET 0x9000)
+set(ESP32_PARTITION_TABLE_FILE_PATH ${CMAKE_CURRENT_LIST_DIR}/partition_table.csv)
+set(ESP32_FLASH_SIZE ${G2L_IDF_TARGET_FLASH_SIZE})
+configure_file(${CMAKE_CURRENT_LIST_DIR}/target-sdkconfig.template ${CMAKE_BINARY_DIR}/target-sdkconfig @ONLY)
+
+list(APPEND ESP32_SDKCONFIG_FILES ${CMAKE_BINARY_DIR}/target-sdkconfig)
+
 function(platform_build executable)
     idf_build_process("${ESP_TARGET}"
         COMPONENTS
         freertos
         esptool_py
+        vfs
+        spiffs
         driver
         esp_wifi
         nvs_flash
+        SDKCONFIG_DEFAULTS ${ESP32_SDKCONFIG_FILES}
         SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
     )
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -39,3 +49,22 @@ function(platform_build executable)
 
     idf_build_executable(${executable})
 endfunction()
+
+add_custom_target(erase
+    COMMAND python -m esptool --chip ${ESP_TARGET} -b 921600 erase_flash
+    USES_TERMINAL
+)
+
+add_custom_target(burn
+    COMMAND python -m esptool --chip ${ESP_TARGET} -b 921600 write_flash @flash_args
+    DEPENDS ${elf_file}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    USES_TERMINAL
+)
+
+add_custom_target(serial-monitor
+    COMMAND python $ENV{IDF_PATH}/tools/idf_monitor.py
+    DEPENDS burn
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    USES_TERMINAL
+)
