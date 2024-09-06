@@ -26,63 +26,110 @@
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
+#include "g2l-log.h"
 #include "nvs_flash.h"
 
 #include <stdbool.h>
 #include <string.h>
 
+#define TAG "g2l-hal-wifi"
+
 static bool first_time = true;
-static volatile bool retry = true;
-static char local_ssid[32];
-static char local_password[32];
+static volatile int retry_count = HAL_WIFI_RETRY_COUNT;
+static char local_ssid[32] = "";
+static char local_password[32] = "";
 
-static g2l_hal_wifi_state_handler_t on_connect_handler = NULL;
-static g2l_hal_wifi_state_handler_t on_disconnect_handler = NULL;
+static g2l_hal_wifi_event_handler_t event_handler = NULL;
 
-static void handle_situation(g2l_hal_wifi_state_handler_t handler,
-                             bool is_connected) {
-    if (handler) {
-        handler(is_connected);
+static void handle_started(void) {
+    I(TAG, "STA started");
+    if (event_handler) {
+        event_handler(G2L_HAL_WIFI_STA_STARTED, NULL);
     }
 }
 
-static void handle_on_connected(void) {
-    handle_situation(on_connect_handler, true);
+static void handle_on_connection_state_update(bool is_connected) {
+    if (event_handler) {
+        if (is_connected) {
+            I(TAG, "connected");
+            event_handler(G2L_HAL_WIFI_STA_CONNECTED, NULL);
+        } else {
+            I(TAG, "disconnected");
+            event_handler(G2L_HAL_WIFI_STA_DISCONNECTED, NULL);
+        }
+    }
 }
 
-static void handle_on_disconnected(void) {
-    handle_situation(on_disconnect_handler, false);
+static void handle_scan(void) {
+    g2l_hal_wifi_scan_t* scan = calloc(1, sizeof(g2l_hal_wifi_scan_t));
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&scan->count));
+    I(TAG, "Found %d APs:", scan->count);
+
+    wifi_ap_record_t* ap_info = calloc(scan->count, sizeof(wifi_ap_record_t));
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&scan->count, ap_info));
+
+    scan->entries = calloc(scan->count, sizeof(g2l_hal_wifi_scan_entry_t));
+
+    for (int i = 0; i < scan->count; i++) {
+        scan->entries[i].rssi = ap_info[i].rssi;
+        scan->entries[i].is_secure = ap_info[i].authmode != WIFI_AUTH_OPEN;
+        strncpy(scan->entries[i].ssid, (char*)ap_info[i].ssid,
+                HAL_WIFI_SSID_MAX_LENGTH);
+    }
+    if (event_handler) {
+        event_handler(G2L_HAL_WIFI_SCAN_DONE, scan);
+    }
+    free(scan->entries);
+    free(scan);
+    free(ap_info);
 }
 
-static void event_handler(void* arg,
-                          esp_event_base_t event_base,
-                          int32_t event_id,
-                          void* event_data) {
+static void on_wifi_event_handler(void* arg,
+                                  esp_event_base_t event_base,
+                                  int32_t event_id,
+                                  void* event_data) {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        printf("wifi: station started");
-        esp_wifi_connect();
+        handle_started();
     } else if (event_base == WIFI_EVENT &&
                event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        handle_on_disconnected();
-        printf("wifi: disconnected");
-        if (retry) {
+        handle_on_connection_state_update(false);
+        if (retry_count > 0) {
+            retry_count--;
             esp_wifi_connect();
+        } else {
+            I(TAG, "Connection retry count exceeded");
         }
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*)event_data;
-        printf("wifi: connected, IP=" IPSTR, IP2STR(&event->ip_info.ip));
-        handle_on_connected();
+        I(TAG, "connected, IP=" IPSTR, IP2STR(&event->ip_info.ip));
+        handle_on_connection_state_update(true);
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_SCAN_DONE) {
+        I(TAG, "Scan done");
+        handle_scan();
     }
 }
 
-void g2l_hal_wifi_set_on_connected_handler(
-    g2l_hal_wifi_state_handler_t on_connected) {
-    on_connect_handler = on_connected;
+void g2l_hal_wifi_initialize(g2l_hal_wifi_event_handler_t on_event) {
+    event_handler = on_event;
+
+    esp_netif_create_default_wifi_sta();
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(
+        WIFI_EVENT, ESP_EVENT_ANY_ID, &on_wifi_event_handler, NULL,
+        &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(
+        IP_EVENT, IP_EVENT_STA_GOT_IP, &on_wifi_event_handler, NULL,
+        &instance_got_ip));
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_start());
 }
 
-void g2l_hal_wifi_set_on_disconnected_handler(
-    g2l_hal_wifi_state_handler_t on_disconnected) {
-    on_disconnect_handler = on_disconnected;
+void g2l_hal_wifi_scan(void) {
+    esp_wifi_scan_start(NULL, false);
 }
 
 void g2l_hal_wifi_set(const char* ssid, const char* password) {
@@ -91,7 +138,6 @@ void g2l_hal_wifi_set(const char* ssid, const char* password) {
 }
 
 void g2l_hal_wifi_connect(void) {
-    retry = true;
     wifi_config_t wifi_config = {
         .sta =
             {
@@ -102,30 +148,12 @@ void g2l_hal_wifi_connect(void) {
     };
     strcpy(wifi_config.sta.ssid, local_ssid);
     strcpy(wifi_config.sta.password, local_password);
-    if (first_time) {
-        esp_netif_create_default_wifi_sta();
-        wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-        ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-        esp_event_handler_instance_t instance_any_id;
-        esp_event_handler_instance_t instance_got_ip;
-        ESP_ERROR_CHECK(esp_event_handler_instance_register(
-            WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL,
-            &instance_any_id));
-        ESP_ERROR_CHECK(esp_event_handler_instance_register(
-            IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler, NULL,
-            &instance_got_ip));
-
-        ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-        ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
-        ESP_ERROR_CHECK(esp_wifi_start());
-        first_time = false;
-    } else {
-        ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
-        esp_wifi_connect();
-    }
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    retry_count = HAL_WIFI_RETRY_COUNT;
+    esp_wifi_connect();
 }
 
 void g2l_hal_wifi_disconnect(void) {
-    retry = false;
+    retry_count = 0;
     esp_wifi_disconnect();
 }

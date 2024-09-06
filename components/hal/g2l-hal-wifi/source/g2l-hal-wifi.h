@@ -25,14 +25,35 @@
 #define G2L_HAL_WIFI_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
-typedef void (*g2l_hal_wifi_state_handler_t)(bool is_connected);
+#define HAL_WIFI_SSID_MAX_LENGTH 32
+#define HAL_WIFI_RETRY_COUNT 3
 
-void g2l_hal_wifi_set_on_connected_handler(
-    g2l_hal_wifi_state_handler_t on_connected);
+typedef enum {
+    G2L_HAL_WIFI_STA_STARTED,
+    G2L_HAL_WIFI_STA_CONNECTED,
+    G2L_HAL_WIFI_STA_DISCONNECTED,
+    G2L_HAL_WIFI_SCAN_DONE,
+} g2l_hal_wifi_event_t;
 
-void g2l_hal_wifi_set_on_disconnected_handler(
-    g2l_hal_wifi_state_handler_t on_disconnected);
+typedef struct {
+    char ssid[HAL_WIFI_SSID_MAX_LENGTH];
+    int rssi;
+    bool is_secure;
+} g2l_hal_wifi_scan_entry_t;
+
+typedef struct {
+    g2l_hal_wifi_scan_entry_t* entries;
+    uint16_t count;
+} g2l_hal_wifi_scan_t;
+
+typedef void (*g2l_hal_wifi_event_handler_t)(g2l_hal_wifi_event_t event,
+                                             void* data);
+
+void g2l_hal_wifi_initialize(g2l_hal_wifi_event_handler_t on_event);
+
+void g2l_hal_wifi_scan(void);
 
 void g2l_hal_wifi_set(const char* ssid, const char* password);
 
