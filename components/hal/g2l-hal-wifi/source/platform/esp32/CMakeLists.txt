@@ -28,4 +28,5 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE idf::nvs_flash
     PRIVATE idf::esp_wifi
     PRIVATE g2l::log
+    PRIVATE containers
 )

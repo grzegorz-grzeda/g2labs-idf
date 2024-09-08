@@ -33,6 +33,7 @@
 typedef enum {
     G2L_HAL_WIFI_STA_STARTED,
     G2L_HAL_WIFI_STA_CONNECTED,
+    G2L_HAL_WIFI_STA_RECONNECTING,
     G2L_HAL_WIFI_STA_DISCONNECTED,
     G2L_HAL_WIFI_SCAN_DONE,
 } g2l_hal_wifi_event_t;
@@ -48,10 +49,14 @@ typedef struct {
     uint16_t count;
 } g2l_hal_wifi_scan_t;
 
-typedef void (*g2l_hal_wifi_event_handler_t)(g2l_hal_wifi_event_t event,
+typedef void (*g2l_hal_wifi_event_handler_t)(void* context,
+                                             g2l_hal_wifi_event_t event,
                                              void* data);
 
-void g2l_hal_wifi_initialize(g2l_hal_wifi_event_handler_t on_event);
+void g2l_hal_wifi_attach_event_handler(g2l_hal_wifi_event_handler_t handler,
+                                       void* context);
+
+void g2l_hal_wifi_initialize(void);
 
 void g2l_hal_wifi_scan(void);
 

@@ -34,30 +34,41 @@
 
 #define TAG "g2l-hal-wifi"
 
+typedef struct {
+    g2l_hal_wifi_event_handler_t handler;
+    void* context;
+} wifi_event_handler_t;
+
 static bool first_time = true;
 static volatile int retry_count = HAL_WIFI_RETRY_COUNT;
 static char local_ssid[32] = "";
 static char local_password[32] = "";
 
-static g2l_hal_wifi_event_handler_t event_handler = NULL;
+static simple_list_t* event_handlers = NULL;
 
-static void handle_started(void) {
-    I(TAG, "STA started");
-    if (event_handler) {
-        event_handler(G2L_HAL_WIFI_STA_STARTED, NULL);
+static void execute_event_handlers(g2l_hal_wifi_event_t event, void* data) {
+    for (simple_list_iterator_t* it = simple_list_begin(event_handlers); it;
+         it = simple_list_next(it)) {
+        wifi_event_handler_t* handler =
+            (wifi_event_handler_t*)get_from_simple_list_iterator(it);
+        handler->handler(handler->context, event, data);
     }
 }
 
-static void handle_on_connection_state_update(bool is_connected) {
-    if (event_handler) {
-        if (is_connected) {
-            I(TAG, "connected");
-            event_handler(G2L_HAL_WIFI_STA_CONNECTED, NULL);
-        } else {
-            I(TAG, "disconnected");
-            event_handler(G2L_HAL_WIFI_STA_DISCONNECTED, NULL);
-        }
+static void handle_started(void) {
+    I(TAG, "STA started");
+    execute_event_handlers(G2L_HAL_WIFI_STA_STARTED, NULL);
+}
+
+static void handle_on_connection_state_update(g2l_hal_wifi_event_t event) {
+    if (event == G2L_HAL_WIFI_STA_CONNECTED) {
+        I(TAG, "connected");
+    } else if (event == G2L_HAL_WIFI_STA_DISCONNECTED) {
+        I(TAG, "disconnected");
+    } else if (event == G2L_HAL_WIFI_STA_RECONNECTING) {
+        I(TAG, "reconnecting");
     }
+    execute_event_handlers(event, NULL);
 }
 
 static void handle_scan(void) {
@@ -76,9 +87,7 @@ static void handle_scan(void) {
         strncpy(scan->entries[i].ssid, (char*)ap_info[i].ssid,
                 HAL_WIFI_SSID_MAX_LENGTH);
     }
-    if (event_handler) {
-        event_handler(G2L_HAL_WIFI_SCAN_DONE, scan);
-    }
+    execute_event_handlers(G2L_HAL_WIFI_SCAN_DONE, scan);
     free(scan->entries);
     free(scan);
     free(ap_info);
@@ -92,26 +101,44 @@ static void on_wifi_event_handler(void* arg,
         handle_started();
     } else if (event_base == WIFI_EVENT &&
                event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        handle_on_connection_state_update(false);
         if (retry_count > 0) {
             retry_count--;
+            handle_on_connection_state_update(G2L_HAL_WIFI_STA_RECONNECTING);
             esp_wifi_connect();
         } else {
             I(TAG, "Connection retry count exceeded");
+            handle_on_connection_state_update(G2L_HAL_WIFI_STA_DISCONNECTED);
         }
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*)event_data;
         I(TAG, "connected, IP=" IPSTR, IP2STR(&event->ip_info.ip));
-        handle_on_connection_state_update(true);
+        handle_on_connection_state_update(G2L_HAL_WIFI_STA_CONNECTED);
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_SCAN_DONE) {
         I(TAG, "Scan done");
         handle_scan();
     }
 }
 
-void g2l_hal_wifi_initialize(g2l_hal_wifi_event_handler_t on_event) {
-    event_handler = on_event;
+void g2l_hal_wifi_attach_event_handler(g2l_hal_wifi_event_handler_t handler,
+                                       void* context) {
+    if (!event_handlers) {
+        event_handlers = simple_list_create();
+    }
+    if (!event_handlers) {
+        return;
+    }
 
+    wifi_event_handler_t* handler_entry =
+        calloc(1, sizeof(wifi_event_handler_t));
+    if (!handler_entry) {
+        return;
+    }
+    handler_entry->handler = handler;
+    handler_entry->context = context;
+    append_to_simple_list(event_handlers, handler_entry);
+}
+
+void g2l_hal_wifi_initialize(void) {
     esp_netif_create_default_wifi_sta();
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
