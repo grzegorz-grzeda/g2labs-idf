@@ -19,22 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-cmake_minimum_required(VERSION 3.25)
-
-project(hello-world)
-include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
-
-add_executable(${PROJECT_NAME}
-    main.c
-)
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE g2l::log
-    PRIVATE g2l::hal::uart
-    PRIVATE g2l::main
-    PRIVATE g2l::os::delay
-    PRIVATE g2l::hal::gpio
-    PRIVATE g2l::hal::ws28xx
-    PRIVATE g2l::color-manipulation
+target_sources(${PROJECT_NAME}
+    PRIVATE wifi-scan.c
 )
 
-g2l_idf_build(${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)

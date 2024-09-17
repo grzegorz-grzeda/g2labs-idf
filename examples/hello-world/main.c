@@ -1,9 +1,9 @@
 #include "color-manipulation.h"
-#include "g2l-delay.h"
 #include "g2l-hal-gpio.h"
+#include "g2l-hal-uart.h"
 #include "g2l-hal-ws28xx.h"
 #include "g2l-log.h"
-#include "g2l-uart.h"
+#include "g2l-os-delay.h"
 
 #define TAG "hello-world"
 
@@ -30,8 +30,8 @@ static void led_animate(void) {
 }
 
 int main(int argc, char** argv) {
-    g2l_uart_init(9600);
-    g2l_uart_register_stdout();
+    g2l_hal_uart_initialize(115200, NULL);
+    g2l_hal_uart_register_stdout();
 
     g2l_hal_ws28xx_initialize(WS28XX_LED_PIN, WS28XX_LED_COUNT);
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
         state = !state;
         g2l_hal_gpio_update_output(STATUS_LED, state);
         led_animate();
-        g2l_delay_ms(20);
+        g2l_os_delay_ms(20);
     }
     return 0;
 }

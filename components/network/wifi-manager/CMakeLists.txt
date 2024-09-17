@@ -21,20 +21,19 @@
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.25)
 
-project(hello-world)
-include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
-
-add_executable(${PROJECT_NAME}
-    main.c
+project(wifi-manager
+    VERSION 0.0.1
+    DESCRIPTION "G2Labs OS Delay"
+    LANGUAGES C
 )
+
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::network::wifi-manager ALIAS ${PROJECT_NAME})
+
+add_subdirectory(src)
+
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE g2l::log
-    PRIVATE g2l::hal::uart
-    PRIVATE g2l::main
-    PRIVATE g2l::os::delay
-    PRIVATE g2l::hal::gpio
-    PRIVATE g2l::hal::ws28xx
-    PRIVATE g2l::color-manipulation
+    PRIVATE g2l::hal::wifi
+    PRIVATE g2l::os::fs
+    PRIVATE containers
 )
-
-g2l_idf_build(${PROJECT_NAME})

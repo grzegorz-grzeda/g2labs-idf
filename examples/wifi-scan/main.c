@@ -9,7 +9,7 @@
 
 #define TAG "wifi-scan"
 
-static void on_wifi_event(g2l_hal_wifi_event_t event, void* data) {
+static void on_wifi_event(void* ctx, g2l_hal_wifi_event_t event, void* data) {
     if (event == G2L_HAL_WIFI_STA_STARTED) {
         I(TAG, "STA started");
         g2l_hal_wifi_scan();
@@ -29,7 +29,8 @@ static void on_wifi_event(g2l_hal_wifi_event_t event, void* data) {
 }
 
 int main(int argc, char** argv) {
-    g2l_hal_wifi_initialize(on_wifi_event);
+    g2l_hal_wifi_attach_event_handler(on_wifi_event, NULL);
+    g2l_hal_wifi_initialize();
 
     while (1) {
         g2l_os_delay_ms(100);

@@ -29,6 +29,8 @@
 #include "g2l-log.h"
 #include "nvs_flash.h"
 
+#include "simple-list.h"
+
 #include <stdbool.h>
 #include <string.h>
 
@@ -122,7 +124,7 @@ static void on_wifi_event_handler(void* arg,
 void g2l_hal_wifi_attach_event_handler(g2l_hal_wifi_event_handler_t handler,
                                        void* context) {
     if (!event_handlers) {
-        event_handlers = simple_list_create();
+        event_handlers = create_simple_list();
     }
     if (!event_handlers) {
         return;
