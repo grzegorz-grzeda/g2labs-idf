@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +37,12 @@
 
 typedef char full_path_name[200];
 
+static bool is_fs_initialized = false;
+
 void g2l_os_fs_initialize(void) {
+    if (is_fs_initialized) {
+        return;
+    }
     esp_vfs_spiffs_conf_t conf = {.base_path = "/fs",
                                   .partition_label = NULL,
                                   .max_files = 5,
@@ -54,6 +60,7 @@ void g2l_os_fs_initialize(void) {
     } else {
         I(TAG, "Partition size: total: %d, used: %d", total, used);
     }
+    is_fs_initialized = true;
 }
 
 static void create_full_path_name(full_path_name full_path, const char* name) {
