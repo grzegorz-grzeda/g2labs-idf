@@ -8,8 +8,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,9 +25,8 @@
 #define COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE_FLOAT (100.0f)
 #define COLOR_MANIPULATION_HSV_HUE_GROUP_SIZE (60)
 
-static color_hsv_t clip_hsv_input_values(color_hsv_t hsv)
-{
-    hsv.hue %= COLOR_MANIPULATION_HSV_HUE_MAX_VALUE; // h -> [0,360)
+static color_hsv_t clip_hsv_input_values(color_hsv_t hsv) {
+    hsv.hue %= COLOR_MANIPULATION_HSV_HUE_MAX_VALUE;  // h -> [0,360)
     if (hsv.saturation > COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE) {
         hsv.saturation = COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE;
     }
@@ -37,17 +36,61 @@ static color_hsv_t clip_hsv_input_values(color_hsv_t hsv)
     return hsv;
 }
 
-color_rgb_t convert_color_hsv_to_rgb(color_hsv_t hsv)
-{
+color_hsv_t convert_color_rgb_to_hsv(color_rgb_t rgb) {
+    color_hsv_t hsv;
+    uint8_t rgb_max = rgb.red;
+    uint8_t rgb_min = rgb.red;
+    if (rgb.green > rgb_max) {
+        rgb_max = rgb.green;
+    } else if (rgb.green < rgb_min) {
+        rgb_min = rgb.green;
+    }
+    if (rgb.blue > rgb_max) {
+        rgb_max = rgb.blue;
+    } else if (rgb.blue < rgb_min) {
+        rgb_min = rgb.blue;
+    }
+
+    uint8_t rgb_delta = rgb_max - rgb_min;
+    hsv.value = rgb_max;
+    if (rgb_max == 0) {
+        hsv.saturation = 0;
+        hsv.hue = 0;
+        return hsv;
+    }
+    hsv.saturation =
+        (rgb_delta * COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE) / rgb_max;
+    if (hsv.saturation == 0) {
+        hsv.hue = 0;
+        return hsv;
+    }
+    if (rgb_max == rgb.red) {
+        hsv.hue = 60 * (rgb.green - rgb.blue) / rgb_delta;
+    } else if (rgb_max == rgb.green) {
+        hsv.hue = 60 * (rgb.blue - rgb.red) / rgb_delta + 120;
+    } else {
+        hsv.hue = 60 * (rgb.red - rgb.green) / rgb_delta + 240;
+    }
+    if (hsv.hue < 0) {
+        hsv.hue += COLOR_MANIPULATION_HSV_HUE_MAX_VALUE;
+    }
+    return hsv;
+}
+
+color_rgb_t convert_color_hsv_to_rgb(color_hsv_t hsv) {
     hsv = clip_hsv_input_values(hsv);
     uint32_t rgb_max = hsv.value * COLOR_MANIPULATION_RGB_MAX_VALUE_FLOAT;
-    uint32_t rgb_min = rgb_max * (COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE - hsv.saturation) /
-                       COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE_FLOAT;
+    uint32_t rgb_min =
+        rgb_max *
+        (COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE - hsv.saturation) /
+        COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE_FLOAT;
     uint32_t hue_color_group = hsv.hue / COLOR_MANIPULATION_HSV_HUE_GROUP_SIZE;
-    uint32_t hue_color_group_difference = hsv.hue % COLOR_MANIPULATION_HSV_HUE_GROUP_SIZE;
+    uint32_t hue_color_group_difference =
+        hsv.hue % COLOR_MANIPULATION_HSV_HUE_GROUP_SIZE;
 
     // RGB adjustment amount by hue
-    uint32_t rgb_adjustment = (rgb_max - rgb_min) * hue_color_group_difference / COLOR_MANIPULATION_HSV_HUE_GROUP_SIZE;
+    uint32_t rgb_adjustment = (rgb_max - rgb_min) * hue_color_group_difference /
+                              COLOR_MANIPULATION_HSV_HUE_GROUP_SIZE;
 
     color_rgb_t result;
     switch (hue_color_group) {

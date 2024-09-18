@@ -8,8 +8,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -28,7 +28,6 @@
 #define COLOR_MANIPULATION_HSV_SATURATION_MAX_VALUE (100)
 #define COLOR_MANIPULATION_HSV_VALUE_MAX_VALUE (100)
 
-
 typedef struct color_rgb {
     uint8_t red;
     uint8_t blue;
@@ -41,6 +40,8 @@ typedef struct color_hsv {
     uint8_t value;
 } color_hsv_t;
 
+color_hsv_t convert_color_rgb_to_hsv(color_rgb_t rgb);
+
 color_rgb_t convert_color_hsv_to_rgb(color_hsv_t hsv);
 
-#endif // COLOR_MANIPULATION_H
+#endif  // COLOR_MANIPULATION_H
