@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 add_subdirectory(hal)
+add_subdirectory(network)
 add_subdirectory(os)
 add_subdirectory(adapters)
 add_subdirectory(devices)

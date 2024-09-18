@@ -21,33 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <stdlib.h>
-#include "freertos/semphr.h"
-#include "freertos/task.h"
-#include "g2l-os-mutex.h"
+#ifndef G2L_OS_QUEUE_H
+#define G2L_OS_QUEUE_H
 
-typedef struct g2l_os_mutex {
-    SemaphoreHandle_t mutex;
-} g2l_os_mutex_t;
+#include <stddef.h>
 
-g2l_os_mutex_t* g2l_os_mutex_create(void) {
-    g2l_os_mutex_t* mtx = calloc(1, sizeof(g2l_os_mutex_t));
-    if (mtx) {
-        mtx->mutex = xSemaphoreCreateMutex();
-    }
-    return mtx;
-}
+typedef struct g2l_os_queue g2l_os_queue_t;
 
-void g2l_os_mutex_lock(g2l_os_mutex_t* mutex) {
-    if (!mutex) {
-        return;
-    }
-    xSemaphoreTake(mutex->mutex, portMAX_DELAY);
-}
+g2l_os_queue_t* g2l_os_queue_create(size_t size, size_t item_size);
 
-void g2l_os_mutex_unlock(g2l_os_mutex_t* mutex) {
-    if (!mutex) {
-        return;
-    }
-    xSemaphoreGive(mutex->mutex);
-}
+void g2l_os_queue_destroy(g2l_os_queue_t* queue);
+
+void g2l_os_queue_send(g2l_os_queue_t* queue, const void* item);
+
+void g2l_os_queue_receive(g2l_os_queue_t* queue, void* item);
+
+#endif  // G2L_OS_QUEUE_H

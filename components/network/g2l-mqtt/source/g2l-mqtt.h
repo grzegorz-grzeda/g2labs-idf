@@ -29,18 +29,19 @@
 typedef struct g2l_mqtt_client g2l_mqtt_client_t;
 
 typedef enum {
-    G2L_MQTT_CONNECTED,
-    G2L_MQTT_DISCONNECTED,
-    G2L_MQTT_SUBSCRIBED,
-    G2L_MQTT_MESSAGE_RECEIVED,
-    G2L_MQTT_MESSAGE_SENT,
-    G2L_MQTT_ERROR,
+    G2L_MQTT_EVENT_CONNECTED,
+    G2L_MQTT_EVENT_DISCONNECTED,
+    G2L_MQTT_EVENT_SUBSCRIBED,
+    G2L_MQTT_EVENT_UNSUBSCRIBED,
+    G2L_MQTT_EVENT_MESSAGE_RECEIVED,
+    G2L_MQTT_EVENT_MESSAGE_SENT,
+    G2L_MQTT_EVENT_ERROR,
 } g2l_mqtt_event_type_t;
 
 typedef struct {
-    char* topic;
+    const char* topic;
     size_t topic_len;
-    char* message;
+    const char* message;
     size_t message_len;
 } g2l_mqtt_message_t;
 
@@ -67,18 +68,17 @@ typedef struct {
     const char* password;
 } g2l_mqtt_connection_t;
 
-typedef void (*g2l_mqtt_event_handler_t)(void* context, g2l_mqtt_event_t event);
+typedef void (*g2l_mqtt_event_handler_t)(void* context,
+                                         g2l_mqtt_client_t* mqtt,
+                                         g2l_mqtt_event_t event);
 
-g2l_mqtt_client_t* g2l_mqtt_create(void);
-
-void g2l_mqtt_destroy(g2l_mqtt_client_t* client);
+g2l_mqtt_client_t* g2l_mqtt_create(g2l_mqtt_connection_t* connection);
 
 void g2l_mqtt_attach_event_handler(g2l_mqtt_client_t* client,
                                    g2l_mqtt_event_handler_t handler,
                                    void* context);
 
-void g2l_mqtt_connect(g2l_mqtt_client_t* client,
-                      g2l_mqtt_connection_t* connection);
+void g2l_mqtt_connect(g2l_mqtt_client_t* client);
 
 void g2l_mqtt_disconnect(g2l_mqtt_client_t* client);
 

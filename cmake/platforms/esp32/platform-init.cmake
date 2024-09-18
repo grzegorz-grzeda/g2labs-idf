@@ -40,6 +40,7 @@ function(platform_build executable)
         driver
         esp_wifi
         nvs_flash
+        mqtt
         SDKCONFIG_DEFAULTS ${ESP32_SDKCONFIG_FILES}
         SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig
     )
@@ -64,7 +65,7 @@ add_custom_target(burn
 
 add_custom_target(serial-monitor
     COMMAND python $ENV{IDF_PATH}/tools/idf_monitor.py
-    DEPENDS burn
+    DEPENDS ${elf_file}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     USES_TERMINAL
 )

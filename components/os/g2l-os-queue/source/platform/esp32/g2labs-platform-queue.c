@@ -21,32 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <pthread.h>
 #include <stdlib.h>
-#include "g2l-os-mutex.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "freertos/task.h"
+#include "g2l-os-queue.h"
 
-typedef struct g2l_os_mutex {
-    pthread_mutex_t mutex;
-} g2l_os_mutex_t;
+typedef struct g2l_os_queue {
+    QueueHandle_t queue;
+} g2l_os_queue_t;
 
-g2l_os_mutex_t* g2l_os_mutex_create(void) {
-    g2l_os_mutex_t* mtx = calloc(1, sizeof(g2l_os_mutex_t));
-    if (mtx) {
-        pthread_mutex_init(&mtx->mutex, NULL);
+g2l_os_queue_t* g2l_os_queue_create(size_t size, size_t item_size) {
+    g2l_os_queue_t* queue = calloc(1, sizeof(g2l_os_queue_t));
+    if (queue) {
+        queue->queue = xQueueCreate(size, item_size);
     }
-    return mtx;
+    return queue;
 }
 
-void g2l_os_mutex_lock(g2l_os_mutex_t* mutex) {
-    if (!mutex) {
-        return;
+void g2l_os_queue_destroy(g2l_os_queue_t* queue) {
+    if (queue) {
+        vQueueDelete(queue->queue);
+        free(queue);
     }
-    pthread_mutex_lock(&mutex->mutex);
 }
 
-void g2l_os_mutex_unlock(g2l_os_mutex_t* mutex) {
-    if (!mutex) {
+void g2l_os_queue_send(g2l_os_queue_t* queue, const void* item) {
+    if (!queue) {
         return;
     }
-    pthread_mutex_unlock(&mutex->mutex);
+    if (xPortInIsrContext()) {
+        BaseType_t _dummy = pdFALSE;
+        xQueueSendFromISR(queue->queue, item, &_dummy);
+    } else {
+        xQueueSend(queue->queue, item, portMAX_DELAY);
+    }
+}
+
+void g2l_os_queue_receive(g2l_os_queue_t* queue, void* item) {
+    if (!queue) {
+        return;
+    }
+    if (xPortInIsrContext()) {
+        BaseType_t _dummy = pdFALSE;
+        xQueueReceiveFromISR(queue->queue, item, &_dummy);
+    } else {
+        xQueueReceive(queue->queue, item, portMAX_DELAY);
+    }
 }

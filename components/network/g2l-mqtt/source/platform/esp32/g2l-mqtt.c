@@ -41,69 +41,146 @@ typedef struct g2l_mqtt_client {
     esp_mqtt_client_config_t mqtt_cfg;
 } g2l_mqtt_client_t;
 
+static void handle_mqtt_event(g2l_mqtt_client_t* client,
+                              g2l_mqtt_event_t event) {
+    if (!client) {
+        return;
+    }
+    for (simple_list_iterator_t* it = simple_list_begin(client->event_handlers);
+         it != NULL; it = simple_list_next(it)) {
+        mqtt_event_handler_t* entry = get_from_simple_list_iterator(it);
+        entry->handler(entry->context, client, event);
+    }
+}
+
+static void handle_mqtt_connected_event(g2l_mqtt_client_t* client) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_CONNECTED,
+    };
+    handle_mqtt_event(client, event);
+}
+
+static void handle_mqtt_disconnected_event(g2l_mqtt_client_t* client) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_DISCONNECTED,
+    };
+    handle_mqtt_event(client, event);
+}
+
+static void handle_mqtt_subscribed_event(g2l_mqtt_client_t* client) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_SUBSCRIBED,
+    };
+    handle_mqtt_event(client, event);
+}
+
+static void handle_mqtt_unsubscribed_event(g2l_mqtt_client_t* client) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_UNSUBSCRIBED,
+    };
+    handle_mqtt_event(client, event);
+}
+
+static void handle_mqtt_published_event(g2l_mqtt_client_t* client) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_MESSAGE_SENT,
+    };
+    handle_mqtt_event(client, event);
+}
+
+static void handle_mqtt_error_event(g2l_mqtt_client_t* client,
+                                    g2l_mqtt_error_code_t error_code) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_ERROR,
+        .error_code = error_code,
+    };
+    handle_mqtt_event(client, event);
+}
+
+static void handle_mqtt_data_event(g2l_mqtt_client_t* client,
+                                   const char* topic,
+                                   size_t topic_len,
+                                   const char* data,
+                                   size_t data_len) {
+    g2l_mqtt_event_t event = {
+        .type = G2L_MQTT_EVENT_MESSAGE_RECEIVED,
+        .message =
+            {
+                .topic = topic,
+                .topic_len = topic_len,
+                .message = data,
+                .message_len = data_len,
+            },
+    };
+    handle_mqtt_event(client, event);
+}
+
 static void mqtt_event_handler(void* handler_args,
                                esp_event_base_t base,
                                int32_t event_id,
                                void* event_data) {
+    g2l_mqtt_client_t* client = handler_args;
     esp_mqtt_event_handle_t event = event_data;
-    esp_mqtt_client_handle_t client = event->client;
     int msg_id;
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
-            ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
-            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+            D(TAG, "MQTT_EVENT_CONNECTED");
+            handle_mqtt_connected_event(client);
             break;
         case MQTT_EVENT_DISCONNECTED:
-            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+            D(TAG, "MQTT_EVENT_DISCONNECTED");
+            handle_mqtt_disconnected_event(client);
             break;
         case MQTT_EVENT_SUBSCRIBED:
-            ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
+            D(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
+            handle_mqtt_subscribed_event(client);
             break;
         case MQTT_EVENT_UNSUBSCRIBED:
-            ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
+            D(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
+            handle_mqtt_unsubscribed_event(client);
             break;
         case MQTT_EVENT_PUBLISHED:
-            ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
+            D(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
+            handle_mqtt_published_event(client);
             break;
         case MQTT_EVENT_DATA:
-            ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-            printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-            printf("DATA=%.*s\r\n", event->data_len, event->data);
+            D(TAG, "MQTT_EVENT_DATA");
+            handle_mqtt_data_event(client, event->topic, event->topic_len,
+                                   event->data, event->data_len);
             break;
         case MQTT_EVENT_ERROR:
-            ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
+            D(TAG, "MQTT_EVENT_ERROR");
+            handle_mqtt_error_event(client, event->error_handle->error_type);
             break;
         default:
-            ESP_LOGI(TAG, "Other event id:%d", event->event_id);
+            D(TAG, "Other event id:%d", event->event_id);
             break;
     }
 }
 
-g2l_mqtt_client_t* g2l_mqtt_create(void) {
+g2l_mqtt_client_t* g2l_mqtt_create(g2l_mqtt_connection_t* connection) {
+    if (!connection) {
+        return NULL;
+    }
     g2l_mqtt_client_t* client =
-        (g2l_mqtt_client_t*)malloc(sizeof(g2l_mqtt_client_t));
+        (g2l_mqtt_client_t*)calloc(1, sizeof(g2l_mqtt_client_t));
     if (!client) {
-        G2L_LOGE(TAG, "Failed to allocate memory for MQTT client");
+        E(TAG, "Failed to allocate memory for MQTT client");
         return NULL;
     }
     client->event_handlers = create_simple_list();
     if (!client->event_handlers) {
-        G2L_LOGE(TAG, "Failed to create event handlers list");
+        E(TAG, "Failed to create event handlers list");
         free(client);
         return NULL;
     }
-    return client;
-}
+    client->mqtt_cfg.broker.address.uri = connection->host;
+    client->mqtt_cfg.broker.address.port = connection->port;
 
-void g2l_mqtt_destroy(g2l_mqtt_client_t* client) {
-    if (!client) {
-        return;
-    }
-    if (client->event_handlers) {
-        simple_list_destroy(client->event_handlers);
-    }
-    free(client);
+    client->client = esp_mqtt_client_init(&client->mqtt_cfg);
+    esp_mqtt_client_register_event(client->client, ESP_EVENT_ANY_ID,
+                                   mqtt_event_handler, client);
+    return client;
 }
 
 void g2l_mqtt_attach_event_handler(g2l_mqtt_client_t* client,
@@ -115,7 +192,7 @@ void g2l_mqtt_attach_event_handler(g2l_mqtt_client_t* client,
     mqtt_event_handler_t* event_handler =
         (mqtt_event_handler_t*)malloc(sizeof(mqtt_event_handler_t));
     if (!event_handler) {
-        G2L_LOGE(TAG, "Failed to allocate memory for event handler");
+        E(TAG, "Failed to allocate memory for event handler");
         return;
     }
     event_handler->handler = handler;
@@ -123,25 +200,30 @@ void g2l_mqtt_attach_event_handler(g2l_mqtt_client_t* client,
     append_to_simple_list(client->event_handlers, event_handler);
 }
 
-void g2l_mqtt_connect(g2l_mqtt_client_t* client,
-                      g2l_mqtt_connection_t* connection) {
-    esp_mqtt_client_config_t mqtt_cfg = {
-        .uri = "mqtt://broker.hivemq.com",  // Replace with your MQTT broker URI
-    };
-
-    client->client = esp_mqtt_client_init(&mqtt_cfg);
-    esp_mqtt_client_register_event(client->client, ESP_EVENT_ANY_ID,
-                                   mqtt_event_handler, client);
+void g2l_mqtt_connect(g2l_mqtt_client_t* client) {
+    if (!client) {
+        return;
+    }
     esp_mqtt_client_start(client->client);
 }
 
 void g2l_mqtt_disconnect(g2l_mqtt_client_t* client) {}
 
-void g2l_mqtt_subscribe(g2l_mqtt_client_t* client, const char* topic) {}
+void g2l_mqtt_subscribe(g2l_mqtt_client_t* client, const char* topic) {
+    if (!client || !topic) {
+        return;
+    }
+    esp_mqtt_client_subscribe(client->client, topic, 0);
+}
 
 void g2l_mqtt_unsubscribe(g2l_mqtt_client_t* client, const char* topic) {}
 
 void g2l_mqtt_publish(g2l_mqtt_client_t* client,
                       const char* topic,
                       const char* message,
-                      size_t message_len) {}
+                      size_t message_len) {
+    if (!client || !topic || !message) {
+        return;
+    }
+    esp_mqtt_client_publish(client->client, topic, message, message_len, 0, 0);
+}

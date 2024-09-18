@@ -20,10 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_sources(${PROJECT_NAME}
-    PRIVATE g2l-os-mutex.c
-)
+if((DEFINED G2L_IDF_TARGET_PLATFORM) AND(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${G2L_IDF_TARGET_PLATFORM}))
+    add_subdirectory(${G2L_IDF_TARGET_PLATFORM})
+else()
+    add_subdirectory(dummy)
+endif()

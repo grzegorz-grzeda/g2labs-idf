@@ -20,10 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_subdirectory(hello-world)
+# add_subdirectory(hello-world)
 
 # add_subdirectory(wifi-connect)
 # add_subdirectory(wifi-scan)
 
 # add_subdirectory(threads)
 # add_subdirectory(storage)
+
+add_subdirectory(mqtt-connect)

@@ -21,5 +21,9 @@
 # SOFTWARE.
 #
 target_sources(${PROJECT_NAME}
-    PRIVATE g2labs-platform-mutex.c
+    PRIVATE g2labs-platform-queue.c
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE idf::freertos
 )

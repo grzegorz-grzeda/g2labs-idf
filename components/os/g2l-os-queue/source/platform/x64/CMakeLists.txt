@@ -20,8 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-if((DEFINED G2LABS_PLATFORM_TARGET) AND(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${G2LABS_PLATFORM_TARGET}))
-    add_subdirectory(${G2LABS_PLATFORM_TARGET})
-else()
-    add_subdirectory(dummy)
-endif()
+target_sources(${PROJECT_NAME}
+    PRIVATE g2labs-platform-queue.c
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE rt
+)

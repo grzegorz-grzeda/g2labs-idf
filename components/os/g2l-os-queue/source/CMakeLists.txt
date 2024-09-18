@@ -20,10 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_sources(${PROJECT_NAME}
-    PRIVATE g2labs-platform-mutex.c
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE idf::freertos
-)
+add_subdirectory(platform)

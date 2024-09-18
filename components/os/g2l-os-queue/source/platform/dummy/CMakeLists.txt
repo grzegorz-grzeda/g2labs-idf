@@ -20,10 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
 target_sources(${PROJECT_NAME}
-    PRIVATE g2l-os-mutex.c
+    PRIVATE g2labs-platform-queue.c
 )

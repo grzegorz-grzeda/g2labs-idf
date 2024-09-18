@@ -27,4 +27,8 @@ project(g2l-os-mutex LANGUAGES C VERSION 1.0.0)
 add_library(${PROJECT_NAME} STATIC)
 add_library(g2l::os::mutex ALIAS ${PROJECT_NAME})
 
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::os::queue
+)
+
 add_subdirectory(source)

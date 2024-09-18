@@ -21,5 +21,6 @@
 # SOFTWARE.
 add_subdirectory(g2l-os-delay)
 add_subdirectory(g2l-os-thread)
+add_subdirectory(g2l-os-queue)
 add_subdirectory(g2l-os-mutex)
 add_subdirectory(g2l-os-fs)
