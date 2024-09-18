@@ -36,6 +36,13 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE g2l::os::mutex
     PRIVATE g2l::hal::ws28xx
     PRIVATE g2l::color-manipulation
+    PRIVATE db
 )
+
+# Set the path to the storage partition
+# This is required to create the storage partition
+# provide a 'config' subidrectory with the partition content for the DB library
+set(G2L_IDF_TARGET_PLATFORM_FS_IMAGE_DIR ${CMAKE_CURRENT_LIST_DIR}/config
+    PARENT_SCOPE CACHE STRING "Path to create storage partition" FORCE)
 
 g2l_idf_build(${PROJECT_NAME})

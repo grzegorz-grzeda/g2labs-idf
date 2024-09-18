@@ -24,6 +24,5 @@
 # add_subdirectory(wifi-connect)
 # add_subdirectory(wifi-scan)
 # add_subdirectory(threads)
-add_subdirectory(file-system-example)
-
-# add_subdirectory(mqtt-connect)
+# add_subdirectory(file-system-example)
+add_subdirectory(mqtt-connect)
