@@ -59,7 +59,6 @@ void g2l_os_fs_initialize(void) {
 static void create_full_path_name(full_path_name full_path, const char* name) {
     strcpy(full_path, "/fs/");
     strcat(full_path, name);
-    strcat(full_path, ".txt");
 }
 
 size_t g2l_os_fs_get_size_of_file(const char* file_name) {

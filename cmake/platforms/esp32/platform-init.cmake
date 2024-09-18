@@ -48,6 +48,11 @@ function(platform_build executable)
 
     target_link_libraries(${executable} PRIVATE idf::freertos idf::esp_common)
 
+    if(DEFINED G2L_IDF_TARGET_PLATFORM_FS_IMAGE_DIR)
+        message(STATUS "Creating partition image for 'storage' filesystem based of ${G2L_IDF_TARGET_PLATFORM_FS_IMAGE_DIR}")
+        spiffs_create_partition_image(storage ${G2L_IDF_TARGET_PLATFORM_FS_IMAGE_DIR} FLASH_IN_PROJECT)
+    endif()
+
     idf_build_executable(${executable})
 endfunction()
 

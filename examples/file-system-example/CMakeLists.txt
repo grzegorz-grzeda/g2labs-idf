@@ -21,7 +21,7 @@
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.25)
 
-project(storage)
+project(file-system-example)
 include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/g2l-idf.cmake)
 
 add_executable(${PROJECT_NAME}
@@ -32,5 +32,8 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE g2l::os::fs
     PRIVATE g2l::main
 )
+
+set(G2L_IDF_TARGET_PLATFORM_FS_IMAGE_DIR ${CMAKE_CURRENT_LIST_DIR}/files_to_store
+    PARENT_SCOPE CACHE STRING "Path to create storage partition" FORCE)
 
 g2l_idf_build(${PROJECT_NAME})
