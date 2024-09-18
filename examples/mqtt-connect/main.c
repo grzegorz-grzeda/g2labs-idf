@@ -50,9 +50,12 @@ static void update_leds(const char* value, size_t len) {
     if (value[0] == '#') {
         text++;
     }
-    rgb.red = strtol(text, NULL, 16);
-    rgb.green = strtol(text + 2, NULL, 16);
-    rgb.blue = strtol(text + 4, NULL, 16);
+    char text_red[3] = {text[0], text[1], '\0'};
+    char text_green[3] = {text[2], text[3], '\0'};
+    char text_blue[3] = {text[4], text[5], '\0'};
+    rgb.red = strtol(text_red, NULL, 16);
+    rgb.green = strtol(text_green, NULL, 16);
+    rgb.blue = strtol(text_blue, NULL, 16);
 
     color_hsv_t hsv = convert_color_rgb_to_hsv(rgb);
     if (hsv.value > WS28XX_LED_VALUE) {
