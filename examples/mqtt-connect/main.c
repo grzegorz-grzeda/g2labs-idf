@@ -50,13 +50,17 @@ static void update_leds(const char* value, size_t len) {
     if (value[0] == '#') {
         text++;
     }
-    sscanf(text, "%02hhx%02hhx%02hhx", &rgb.red, &rgb.green, &rgb.blue);
+    rgb.red = strtol(text, NULL, 16);
+    rgb.green = strtol(text + 2, NULL, 16);
+    rgb.blue = strtol(text + 4, NULL, 16);
 
     color_hsv_t hsv = convert_color_rgb_to_hsv(rgb);
     if (hsv.value > WS28XX_LED_VALUE) {
         hsv.value = WS28XX_LED_VALUE;
     }
-
+    if (hsv.saturation > WS28XX_LED_SATURATION) {
+        hsv.saturation = WS28XX_LED_SATURATION;
+    }
     rgb = convert_color_hsv_to_rgb(hsv);
 
     g2l_hal_ws28xx_set_every_led_color(rgb.red, rgb.green, rgb.blue);
