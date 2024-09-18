@@ -20,10 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-)
+cmake_minimum_required(VERSION 3.22)
+enable_testing()
 
-target_sources(${PROJECT_NAME}
-    PRIVATE database.c
+project(db LANGUAGES C VERSION 1.0.0)
+add_library(${PROJECT_NAME} STATIC)
+
+add_subdirectory(source)
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC g2l::os::fs
 )

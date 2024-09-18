@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "database.h"
+#include "db.h"
 #include "g2l-os-fs.h"
 
 #include <string.h>
@@ -38,27 +38,32 @@ static void create_namespace_key(namespace_key nk,
     strcat(result, namespace);
     strcat(result, "-");
     strcat(result, key);
+    strcat(result, ".txt");
 }
 
-size_t store_database_value(const char* namespace,
-                            const char* key,
-                            const void* value,
-                            size_t value_size) {
+void db_init(void) {
+    g2l_os_fs_initialize();
+}
+
+size_t db_set(const char* namespace,
+              const char* key,
+              const void* value,
+              size_t value_size) {
     namespace_key nk;
     create_namespace_key(nk, namespace, key);
     return g2l_os_fs_store_file(nk, value, value_size);
 }
 
-size_t does_database_value_exist(const char* namespace, const char* key) {
+size_t db_does_exist(const char* namespace, const char* key) {
     namespace_key nk;
     create_namespace_key(nk, namespace, key);
     return g2l_os_fs_get_size_of_file(nk);
 }
 
-size_t load_database_value(const char* namespace,
-                           const char* key,
-                           void* value,
-                           size_t max_value_size) {
+size_t db_get(const char* namespace,
+              const char* key,
+              void* value,
+              size_t max_value_size) {
     namespace_key nk;
     create_namespace_key(nk, namespace, key);
     return g2l_os_fs_load_file(nk, value, max_value_size);

@@ -25,10 +25,18 @@
 #define DATABASE_H
 #include <stddef.h>
 
-size_t store_database_value(const char* namespace, const char* key, const void* value, size_t value_size);
+void db_init(void);
 
-size_t does_database_value_exist(const char* namespace, const char* key);
+size_t db_set(const char* namespace,
+              const char* key,
+              const void* value,
+              size_t value_size);
 
-size_t load_database_value(const char* namespace, const char* key, void* value, size_t max_value_size);
+size_t db_does_exist(const char* namespace, const char* key);
+
+size_t db_get(const char* namespace,
+              const char* key,
+              void* value,
+              size_t max_value_size);
 
 #endif  // DATABASE_H
