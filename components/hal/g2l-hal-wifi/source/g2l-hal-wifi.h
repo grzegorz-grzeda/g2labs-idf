@@ -28,7 +28,7 @@
 #include <stdint.h>
 
 #define HAL_WIFI_SSID_MAX_LENGTH 32
-#define HAL_WIFI_RETRY_COUNT 3
+#define HAL_WIFI_RETRY_COUNT 10
 
 typedef enum {
     G2L_HAL_WIFI_STA_STARTED,

@@ -47,6 +47,7 @@ static void on_wifi_event(void* ctx, g2l_hal_wifi_event_t event, void* data) {
         g2l_os_mutex_unlock(mutex);
     } else if (event == G2L_HAL_WIFI_STA_DISCONNECTED) {
         I(TAG, "Disconnected from WiFi");
+        g2l_hal_wifi_connect();
     }
 }
 
