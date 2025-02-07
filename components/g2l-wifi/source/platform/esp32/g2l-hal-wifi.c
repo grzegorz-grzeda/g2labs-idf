@@ -75,8 +75,6 @@ static void handle_on_connection_state_update(g2l_wifi_event_t event) {
 static void handle_scan(void) {
     g2l_wifi_scan_t* scan = calloc(1, sizeof(g2l_wifi_scan_t));
     ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&scan->count));
-    I(TAG, "Found %d APs:", scan->count);
-
     if (scan->count == 0) {
         execute_event_handlers(G2L_WIFI_SCAN_DONE, scan);
         free(scan);
@@ -95,8 +93,8 @@ static void handle_scan(void) {
     }
     execute_event_handlers(G2L_WIFI_SCAN_DONE, scan);
     free(scan->entries);
-    free(scan);
     free(ap_info);
+    free(scan);
 }
 
 static void on_wifi_event_handler(void* arg,
