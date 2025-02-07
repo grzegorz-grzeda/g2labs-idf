@@ -77,6 +77,11 @@ static void handle_scan(void) {
     ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&scan->count));
     I(TAG, "Found %d APs:", scan->count);
 
+    if (scan->count == 0) {
+        execute_event_handlers(G2L_HAL_WIFI_SCAN_DONE, scan);
+        free(scan);
+        return;
+    }
     wifi_ap_record_t* ap_info = calloc(scan->count, sizeof(wifi_ap_record_t));
     ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&scan->count, ap_info));
 
@@ -157,7 +162,21 @@ void g2l_hal_wifi_initialize(void) {
 }
 
 void g2l_hal_wifi_scan(void) {
-    esp_wifi_scan_start(NULL, false);
+    static wifi_scan_config_t config = {
+        .show_hidden = true,
+        .scan_type = WIFI_SCAN_TYPE_ACTIVE,
+        .scan_time =
+            {
+                .active =
+                    {
+                        .min = 100,
+                        .max = 1000,
+                    },
+                .passive = 500,
+            },
+    };
+
+    esp_wifi_scan_start(&config, false);
 }
 
 void g2l_hal_wifi_set(const char* ssid, const char* password) {
