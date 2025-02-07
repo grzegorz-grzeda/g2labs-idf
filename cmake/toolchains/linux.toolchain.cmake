@@ -10,5 +10,5 @@ set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_C_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
-set(G2L_IDF_TARGET_PLATFORM "linux" CACHE STRING "The target platform" FORCE PARENT_SCOPE)
-set(G2L_IDF_TARGET_PLATFORM_VARIANT "" CACHE STRING "The target platform variant" FORCE PARENT_SCOPE)
+set(G2L_IDF_TARGET_PLATFORM "linux" CACHE STRING "The target platform" FORCE)
+set(G2L_IDF_TARGET_PLATFORM_VARIANT "" CACHE STRING "The target platform variant" FORCE)
