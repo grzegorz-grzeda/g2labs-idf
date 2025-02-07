@@ -31,7 +31,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 project(g2labs-idf
-    VERSION 0.0.1
+    VERSION 0.0.2
     DESCRIPTION "G2 Labs IoT Development Framework"
     LANGUAGES C CXX ASM)
 
