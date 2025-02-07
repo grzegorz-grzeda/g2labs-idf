@@ -12,10 +12,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build Unit Tests
+    - name: Build and Run Unit Tests
       run: cmake --workflow --preset tests
-
-    - name: Run Unit Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{env.BUILD_TYPE}} --verbose
-
