@@ -21,49 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_HAL_WIFI_H
-#define G2L_HAL_WIFI_H
+#ifndef G2L_WIFI_H
+#define G2L_WIFI_H
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#define HAL_WIFI_SSID_MAX_LENGTH 32
-#define HAL_WIFI_RETRY_COUNT 10
+#define G2L_WIFI_SSID_MAX_LENGTH 32
+#define G2L_WIFI_RETRY_COUNT 10
 
 typedef enum {
-    G2L_HAL_WIFI_STA_STARTED,
-    G2L_HAL_WIFI_STA_CONNECTED,
-    G2L_HAL_WIFI_STA_RECONNECTING,
-    G2L_HAL_WIFI_STA_DISCONNECTED,
-    G2L_HAL_WIFI_SCAN_DONE,
-} g2l_hal_wifi_event_t;
+    G2L_WIFI_STA_STARTED,
+    G2L_WIFI_STA_CONNECTED,
+    G2L_WIFI_STA_RECONNECTING,
+    G2L_WIFI_STA_DISCONNECTED,
+    G2L_WIFI_SCAN_DONE,
+} g2l_wifi_event_t;
 
 typedef struct {
-    char ssid[HAL_WIFI_SSID_MAX_LENGTH];
+    char ssid[G2L_WIFI_SSID_MAX_LENGTH];
     int rssi;
     bool is_secure;
-} g2l_hal_wifi_scan_entry_t;
+} g2l_wifi_scan_entry_t;
 
 typedef struct {
-    g2l_hal_wifi_scan_entry_t* entries;
+    g2l_wifi_scan_entry_t* entries;
     uint16_t count;
-} g2l_hal_wifi_scan_t;
+} g2l_wifi_scan_t;
 
-typedef void (*g2l_hal_wifi_event_handler_t)(void* context,
-                                             g2l_hal_wifi_event_t event,
-                                             void* data);
+typedef void (*g2l_wifi_event_handler_t)(void* context,
+                                         g2l_wifi_event_t event,
+                                         void* data);
 
-void g2l_hal_wifi_attach_event_handler(g2l_hal_wifi_event_handler_t handler,
-                                       void* context);
+void g2l_wifi_attach_event_handler(g2l_wifi_event_handler_t handler,
+                                   void* context);
 
-void g2l_hal_wifi_initialize(void);
+void g2l_wifi_initialize(void);
 
-void g2l_hal_wifi_scan(void);
+void g2l_wifi_scan(void);
 
-void g2l_hal_wifi_set(const char* ssid, const char* password);
+void g2l_wifi_set(const char* ssid, const char* password);
 
-void g2l_hal_wifi_connect(void);
+void g2l_wifi_connect(void);
 
-void g2l_hal_wifi_disconnect(void);
+void g2l_wifi_disconnect(void);
 
-#endif  // G2L_HAL_WIFI_H
+#endif  // G2L_WIFI_H

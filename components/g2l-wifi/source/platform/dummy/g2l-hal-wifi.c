@@ -24,21 +24,21 @@
 #include "g2l-hal-wifi.h"
 #include <stddef.h>
 
-void g2l_hal_wifi_attach_event_handler(g2l_hal_wifi_event_handler_t handler,
+void g2l_wifi_attach_event_handler(g2l_wifi_event_handler_t handler,
                                        void* context) {
     (void)handler;
     (void)context;
 }
 
-void g2l_hal_wifi_initialize(void) {}
+void g2l_wifi_initialize(void) {}
 
-void g2l_hal_wifi_scan(void) {}
+void g2l_wifi_scan(void) {}
 
-void g2l_hal_wifi_set(const char* ssid, const char* password) {
+void g2l_wifi_set(const char* ssid, const char* password) {
     (void)ssid;
     (void)password;
 }
 
-void g2l_hal_wifi_connect(void) {}
+void g2l_wifi_connect(void) {}
 
-void g2l_hal_wifi_disconnect(void) {}
+void g2l_wifi_disconnect(void) {}
