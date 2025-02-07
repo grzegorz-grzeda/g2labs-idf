@@ -22,28 +22,56 @@
  * SOFTWARE.
  */
 #include "g2l-mqtt.h"
+#include "g2l-log.h"
 #define TAG "g2l-mqtt"
 
 typedef struct g2l_mqtt_client {
 } g2l_mqtt_client_t;
 
 g2l_mqtt_client_t* g2l_mqtt_create(g2l_mqtt_connection_t* connection) {
+    (void)connection;
+    E(TAG, "g2l_mqtt_create - Not implemented!");
     return NULL;
 }
 
 void g2l_mqtt_attach_event_handler(g2l_mqtt_client_t* client,
                                    g2l_mqtt_event_handler_t handler,
-                                   void* context) {}
+                                   void* context) {
+    (void)client;
+    (void)handler;
+    (void)context;
+    E(TAG, "g2l_mqtt_attach_event_handler - Not implemented!");
+}
 
-void g2l_mqtt_connect(g2l_mqtt_client_t* client) {}
+void g2l_mqtt_connect(g2l_mqtt_client_t* client) {
+    (void)client;
+    E(TAG, "g2l_mqtt_connect - Not implemented!");
+}
 
-void g2l_mqtt_disconnect(g2l_mqtt_client_t* client) {}
+void g2l_mqtt_disconnect(g2l_mqtt_client_t* client) {
+    (void)client;
+    E(TAG, "g2l_mqtt_disconnect - Not implemented!");
+}
 
-void g2l_mqtt_subscribe(g2l_mqtt_client_t* client, const char* topic) {}
+void g2l_mqtt_subscribe(g2l_mqtt_client_t* client, const char* topic) {
+    (void)client;
+    (void)topic;
+    E(TAG, "g2l_mqtt_subscribe - Not implemented!");
+}
 
-void g2l_mqtt_unsubscribe(g2l_mqtt_client_t* client, const char* topic) {}
+void g2l_mqtt_unsubscribe(g2l_mqtt_client_t* client, const char* topic) {
+    (void)client;
+    (void)topic;
+    E(TAG, "g2l_mqtt_unsubscribe - Not implemented!");
+}
 
 void g2l_mqtt_publish(g2l_mqtt_client_t* client,
                       const char* topic,
                       const char* message,
-                      size_t message_len) {}
+                      size_t message_len) {
+    (void)client;
+    (void)topic;
+    (void)message;
+    (void)message_len;
+    E(TAG, "g2l_mqtt_publish - Not implemented!");
+}

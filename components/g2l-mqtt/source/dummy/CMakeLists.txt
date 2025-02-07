@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2023 G2Labs Grzegorz Grzęda
+# Copyright (c) 2024 G2Labs Grzegorz Grzęda
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-if((DEFINED G2L_IDF_TARGET_PLATFORM) AND(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${G2L_IDF_TARGET_PLATFORM}))
-    add_subdirectory(${G2L_IDF_TARGET_PLATFORM})
-else()
-    add_subdirectory(dummy)
-endif()
+target_sources(${PROJECT_NAME}
+    PRIVATE g2l-mqtt.c
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::log
+)

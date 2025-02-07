@@ -20,4 +20,3 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # add_subdirectory(wifi-manager)
-add_subdirectory(g2l-mqtt)

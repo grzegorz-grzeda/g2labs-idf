@@ -178,8 +178,20 @@ g2l_mqtt_client_t* g2l_mqtt_create(g2l_mqtt_connection_t* connection) {
     client->mqtt_cfg.broker.address.port = connection->port;
 
     client->client = esp_mqtt_client_init(&client->mqtt_cfg);
-    esp_mqtt_client_register_event(client->client, ESP_EVENT_ANY_ID,
-                                   mqtt_event_handler, client);
+    if (!client->client) {
+        E(TAG, "Failed to initialize MQTT client");
+        free(client);
+        return NULL;
+    }
+    esp_err_t returnCode = esp_mqtt_client_register_event(
+        client->client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
+    if (returnCode != ESP_OK) {
+        E(TAG, "Failed to register MQTT main event handler");
+        esp_mqtt_client_destroy(client->client);
+        free(client);
+        return NULL;
+    }
+
     return client;
 }
 
@@ -190,7 +202,7 @@ void g2l_mqtt_attach_event_handler(g2l_mqtt_client_t* client,
         return;
     }
     mqtt_event_handler_t* event_handler =
-        (mqtt_event_handler_t*)malloc(sizeof(mqtt_event_handler_t));
+        (mqtt_event_handler_t*)calloc(1, sizeof(mqtt_event_handler_t));
     if (!event_handler) {
         E(TAG, "Failed to allocate memory for event handler");
         return;
