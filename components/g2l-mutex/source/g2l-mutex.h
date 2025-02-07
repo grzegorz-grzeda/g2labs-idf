@@ -21,15 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_OS_MUTEX_H
-#define G2L_OS_MUTEX_H
+#ifndef G2L_MUTEX_H
+#define G2L_MUTEX_H
 
-typedef struct g2l_os_mutex g2l_os_mutex_t;
+typedef struct g2l_mutex g2l_mutex_t;
 
-g2l_os_mutex_t* g2l_os_mutex_create(void);
+g2l_mutex_t* g2l_mutex_create(void);
 
-void g2l_os_mutex_lock(g2l_os_mutex_t* mutex);
+void g2l_mutex_lock(g2l_mutex_t* mutex);
 
-void g2l_os_mutex_unlock(g2l_os_mutex_t* mutex);
+void g2l_mutex_unlock(g2l_mutex_t* mutex);
 
-#endif  // G2L_OS_MUTEX_H
+#endif  // G2L_MUTEX_H

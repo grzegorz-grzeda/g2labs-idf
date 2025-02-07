@@ -4,11 +4,11 @@
 #include <string.h>
 #include "color-manipulation.h"
 #include "db.h"
-#include "g2l-hal-wifi.h"
+#include "g2l-delay.h"
 #include "g2l-log.h"
 #include "g2l-mqtt.h"
-#include "g2l-os-delay.h"
-#include "g2l-os-mutex.h"
+#include "g2l-mutex.h"
+#include "g2l-wifi.h"
 
 #include <string.h>
 #include "g2l-hal-ws28xx.h"
@@ -27,7 +27,7 @@
 #define DB_LED_PIN_KEY "led-pin"
 #define DB_LED_COUNT_KEY "led-count"
 
-static g2l_os_mutex_t* mutex = NULL;
+static g2l_mutex_t* mutex = NULL;
 
 static char WIFI_SSID[32] = {0};
 static char WIFI_PASSWORD[32] = {0};
@@ -45,7 +45,7 @@ static void on_wifi_event(void* ctx, g2l_hal_wifi_event_t event, void* data) {
         I(TAG, "STA started");
     } else if (event == G2L_HAL_WIFI_STA_CONNECTED) {
         I(TAG, "Connected to WiFi");
-        g2l_os_mutex_unlock(mutex);
+        g2l_mutex_unlock(mutex);
     } else if (event == G2L_HAL_WIFI_STA_DISCONNECTED) {
         I(TAG, "Disconnected from WiFi");
         g2l_hal_wifi_connect();
@@ -150,11 +150,11 @@ int main(int argc, char** argv) {
     g2l_mqtt_client_t* mqtt = g2l_mqtt_create(&connection);
     g2l_mqtt_attach_event_handler(mqtt, on_mqtt_event, mqtt);
 
-    mutex = g2l_os_mutex_create();
-    g2l_os_mutex_lock(mutex);
+    mutex = g2l_mutex_create();
+    g2l_mutex_lock(mutex);
     g2l_hal_wifi_connect();
 
-    g2l_os_mutex_lock(mutex);
+    g2l_mutex_lock(mutex);
     I(TAG, "Connecting to MQTT broker");
     g2l_mqtt_connect(mqtt);
 

@@ -20,10 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_include_directories(${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+cmake_minimum_required(VERSION 3.22)
+enable_testing()
+
+project(g2l-mutex LANGUAGES C VERSION 1.0.0)
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::mutex ALIAS ${PROJECT_NAME})
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::os::queue
 )
 
-target_sources(${PROJECT_NAME}
-    PRIVATE g2l-os-mutex.c
-)
+add_subdirectory(source)
