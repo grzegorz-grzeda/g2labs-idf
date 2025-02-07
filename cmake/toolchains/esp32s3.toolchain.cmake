@@ -1,3 +1,7 @@
+if(NOT DEFINED ENV{IDF_PATH})
+    message(FATAL_ERROR "----------> IDF_PATH environment variable is not set <----------")
+endif()
+
 set(ESP_TARGET "esp32s3" CACHE STRING "ESP target" FORCE)
 include($ENV{IDF_PATH}/tools/cmake/toolchain-${ESP_TARGET}.cmake)
 
