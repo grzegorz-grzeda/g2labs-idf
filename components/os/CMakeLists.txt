@@ -19,8 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_subdirectory(g2l-os-delay)
-add_subdirectory(g2l-os-thread)
 add_subdirectory(g2l-os-queue)
 add_subdirectory(g2l-os-mutex)
 add_subdirectory(g2l-os-fs)

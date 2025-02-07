@@ -21,6 +21,8 @@
 # SOFTWARE.
 add_subdirectory(hal)
 add_subdirectory(network)
+add_subdirectory(g2l-delay)
+add_subdirectory(g2l-thread)
 add_subdirectory(os)
 add_subdirectory(adapters)
 add_subdirectory(devices)

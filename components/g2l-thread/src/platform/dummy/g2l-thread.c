@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-os-thread.h"
+#include "g2l-thread.h"
 #include <stddef.h>
 
-g2l_os_thread_t* g2l_os_thread_create(const char* name,
-                                      uint32_t stack_size,
-                                      g2l_os_thread_func_t func,
-                                      void* arg) {
+g2l_thread_t* g2l_thread_create(const char* name,
+                                uint32_t stack_size,
+                                g2l_thread_handler_t func,
+                                void* arg) {
     return NULL;
 }

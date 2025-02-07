@@ -21,20 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_OS_THREAD_H
-#define G2L_OS_THREAD_H
+#include "g2l-delay.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-#include <stdint.h>
-
-#define G2L_OS_THREAD_STACK_SIZE_DEFAULT (-1)
-
-typedef void (*g2l_os_thread_func_t)(void* arg);
-
-typedef struct g2l_os_thread g2l_os_thread_t;
-
-g2l_os_thread_t* g2l_os_thread_create(const char* name,
-                                      uint32_t stack_size,
-                                      g2l_os_thread_func_t func,
-                                      void* arg);
-
-#endif  // G2L_OS_THREAD_H
+void g2l_delay_ms(uint32_t ms) {
+    vTaskDelay(ms / portTICK_PERIOD_MS);
+}

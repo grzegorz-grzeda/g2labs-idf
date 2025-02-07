@@ -19,15 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-cmake_minimum_required(VERSION 3.25)
-
-project(g2l-os-delay
-    VERSION 0.0.1
-    DESCRIPTION "G2Labs OS Delay"
-    LANGUAGES C
+target_sources(${PROJECT_NAME}
+    PRIVATE g2l-thread.c
 )
-
-add_library(${PROJECT_NAME} STATIC)
-add_library(g2l::os::delay ALIAS ${PROJECT_NAME})
-
-add_subdirectory(src)

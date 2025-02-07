@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 target_sources(${PROJECT_NAME}
-    PRIVATE g2l-os-thread.c
+    PRIVATE g2l-thread.c
 )
 
 target_link_libraries(${PROJECT_NAME}

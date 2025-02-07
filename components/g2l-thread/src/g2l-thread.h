@@ -21,11 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_OS_DELAY_H
-#define G2L_OS_DELAY_H
+#ifndef G2L_THREAD_H
+#define G2L_THREAD_H
 
 #include <stdint.h>
 
-void g2l_os_delay_ms(uint32_t ms);
+#define G2L_THREAD_STACK_SIZE_DEFAULT (-1)
 
-#endif  // G2L_OS_DELAY_H
+typedef void (*g2l_thread_handler_t)(void* arg);
+
+typedef struct g2l_thread g2l_thread_t;
+
+g2l_thread_t* g2l_thread_create(const char* name,
+                                uint32_t stack_size,
+                                g2l_thread_handler_t func,
+                                void* arg);
+
+#endif  // G2L_THREAD_H

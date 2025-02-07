@@ -21,9 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <util/delay.h>
-#include "g2l-os-delay.h"
+#include <stdlib.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "g2l-thread.h"
 
-void g2l_os_delay_ms(uint32_t ms) {
-    _delay_ms(ms);
+typedef struct g2l_thread {
+    TaskHandle_t handle;
+    g2l_thread_handler_t func;
+    void* arg;
+} g2l_thread_t;
+
+void g2l_os_thread_wrapper(void* arg) {
+    g2l_thread_t* data = (g2l_thread_t*)arg;
+    if (data) {
+        data->func(data->arg);
+        free(data);
+    }
+    vTaskDelete(NULL);
+}
+
+g2l_thread_t* g2l_thread_create(const char* name,
+                                uint32_t stack_size,
+                                g2l_thread_handler_t func,
+                                void* arg) {
+    if (!name || !func) {
+        return NULL;
+    }
+    if (stack_size == G2L_THREAD_STACK_SIZE_DEFAULT) {
+        stack_size = 4096;
+    } else if (stack_size < 128) {
+        stack_size = 128;
+    } else {
+        return NULL;
+    }
+    g2l_thread_t* data = (g2l_thread_t*)calloc(1, sizeof(g2l_thread_t));
+    if (!data) {
+        return NULL;
+    }
+    data->func = func;
+    data->arg = arg;
+    xTaskCreate(g2l_os_thread_wrapper, name, stack_size, data, 1,
+                &data->handle);
+    return data;
 }
