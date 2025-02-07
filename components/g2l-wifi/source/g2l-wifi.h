@@ -39,7 +39,7 @@ typedef enum {
 } g2l_wifi_event_t;
 
 typedef struct {
-    char ssid[G2L_WIFI_SSID_MAX_LENGTH];
+    char ssid[G2L_WIFI_SSID_MAX_LENGTH + 1];
     int rssi;
     bool is_secure;
 } g2l_wifi_scan_entry_t;
