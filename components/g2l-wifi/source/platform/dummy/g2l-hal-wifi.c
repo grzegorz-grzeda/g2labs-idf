@@ -21,24 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "g2l-hal-wifi.h"
 #include <stddef.h>
+#include "g2l-log.h"
+#include "g2l-wifi.h"
+
+#define TAG "g2l-wifi"
 
 void g2l_wifi_attach_event_handler(g2l_wifi_event_handler_t handler,
-                                       void* context) {
+                                   void* context) {
     (void)handler;
     (void)context;
+    E(TAG, "g2l_wifi_attach_event_handler - Not implemented!");
 }
 
-void g2l_wifi_initialize(void) {}
+void g2l_wifi_initialize(void) {
+    E(TAG, "g2l_wifi_initialize - Not implemented!");
+}
 
-void g2l_wifi_scan(void) {}
+void g2l_wifi_scan(void) {
+    E(TAG, "g2l_wifi_scan - Not implemented!");
+}
 
 void g2l_wifi_set(const char* ssid, const char* password) {
     (void)ssid;
     (void)password;
+    E(TAG, "g2l_wifi_set - Not implemented!");
 }
 
-void g2l_wifi_connect(void) {}
+void g2l_wifi_connect(void) {
+    E(TAG, "g2l_wifi_connect - Not implemented!");
+}
 
-void g2l_wifi_disconnect(void) {}
+void g2l_wifi_disconnect(void) {
+    E(TAG, "g2l_wifi_disconnect - Not implemented!");
+}

@@ -21,20 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef G2L_OS_FS_H
-#define G2L_OS_FS_H
+#ifndef G2L_FS_H
+#define G2L_FS_H
+#include <stdbool.h>
 #include <stddef.h>
 
-void g2l_os_fs_initialize(void);
+typedef enum g2l_fs_mode {
+    G2L_FS_MODE_READ,
+    G2L_FS_MODE_WRITE,
+    G2L_FS_MODE_APPEND,
+    G2L_FS_MODE_CREATE,
+    G2L_FS_MODE_TRUNCATE,
+} g2l_fs_mode_t;
 
-size_t g2l_os_fs_get_size_of_file(const char* file_name);
+typedef enum g2l_fs_seek_mode {
+    G2L_FS_SEEK_SET,
+    G2L_FS_SEEK_CUR,
+    G2L_FS_SEEK_END,
+} g2l_fs_seek_mode_t;
 
-size_t g2l_os_fs_store_file(const char* file_name,
-                            const void* data,
-                            size_t data_size);
+typedef struct g2l_fs_file g2l_fs_file_t;
 
-size_t g2l_os_fs_load_file(const char* file_name,
-                           void* data,
-                           size_t max_data_size);
+void g2l_fs_initialize(const char* base_path);
 
-#endif  // G2L_OS_FS_H
+size_t g2l_fs_file_size(const char* file_name);
+
+g2l_fs_file_t* g2l_fs_file_open(const char* file_name, g2l_fs_mode_t mode);
+
+void g2l_fs_file_close(g2l_fs_file_t* file);
+
+size_t g2l_fs_file_read(g2l_fs_file_t* file, void* data, size_t max_data_size);
+
+size_t g2l_fs_file_write(g2l_fs_file_t* file,
+                         const void* data,
+                         size_t data_size);
+
+bool g2l_fs_file_seek(g2l_fs_file_t* file,
+                      g2l_fs_seek_mode_t mode,
+                      size_t offset);
+
+#endif  // G2L_FS_H

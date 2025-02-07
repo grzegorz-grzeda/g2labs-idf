@@ -29,21 +29,30 @@
 #include "esp_err.h"
 #include "esp_spiffs.h"
 #include "esp_vfs.h"
-#include "g2l-os-fs.h"
+#include "g2l-fs.h"
 
 #include "g2l-log.h"
 
 #define TAG "FS"
 
+typedef struct g2l_fs_file {
+    FILE* file;
+} g2l_fs_file_t;
+
 typedef char full_path_name[200];
+
+static char fs_base_path[20] = "/fs";
 
 static bool is_fs_initialized = false;
 
-void g2l_os_fs_initialize(void) {
+void g2l_fs_initialize(const char* base_path) {
     if (is_fs_initialized) {
         return;
     }
-    esp_vfs_spiffs_conf_t conf = {.base_path = "/fs",
+    if (base_path) {
+        strcpy(fs_base_path, base_path);
+    }
+    esp_vfs_spiffs_conf_t conf = {.base_path = fs_base_path,
                                   .partition_label = NULL,
                                   .max_files = 5,
                                   .format_if_mount_failed = true};
@@ -64,11 +73,12 @@ void g2l_os_fs_initialize(void) {
 }
 
 static void create_full_path_name(full_path_name full_path, const char* name) {
-    strcpy(full_path, "/fs/");
+    strcpy(full_path, fs_base_path);
+    strcat(full_path, "/");
     strcat(full_path, name);
 }
 
-size_t g2l_os_fs_get_size_of_file(const char* file_name) {
+size_t g2l_fs_file_size(const char* file_name) {
     full_path_name path;
     create_full_path_name(path, file_name);
     struct stat info;
@@ -82,36 +92,66 @@ size_t g2l_os_fs_get_size_of_file(const char* file_name) {
     return 0;
 }
 
-size_t g2l_os_fs_store_file(const char* file_name,
-                            const void* data,
-                            size_t data_size) {
+g2l_fs_file_t* g2l_fs_file_open(const char* file_name, g2l_fs_mode_t mode) {
     full_path_name path;
     create_full_path_name(path, file_name);
-    FILE* fp = fopen(path, "w");
-    size_t result_size = 0;
-    if (fp) {
-        result_size = fwrite(data, 1, data_size, fp);
-        fclose(fp);
-    } else {
-        E(TAG, "Failed to open file '%s' to write (error: %s)", path,
-          strerror(errno));
+    char* mode_str = NULL;
+    if (mode == G2L_FS_MODE_READ) {
+        mode_str = "r";
+    } else if (mode == G2L_FS_MODE_WRITE) {
+        mode_str = "w";
+    } else if (mode == G2L_FS_MODE_APPEND) {
+        mode_str = "a";
+    } else if (mode == G2L_FS_MODE_CREATE) {
+        mode_str = "w+";
+    } else if (mode == G2L_FS_MODE_TRUNCATE) {
+        mode_str = "w";
     }
-    return result_size;
+    FILE* fp = fopen(path, mode_str);
+    if (fp) {
+        g2l_fs_file_t* file = (g2l_fs_file_t*)calloc(1, sizeof(g2l_fs_file_t));
+        file->file = fp;
+        return file;
+    } else {
+        E(TAG, "Failed to open file '%s' (error: %s)", path, strerror(errno));
+        return NULL;
+    }
 }
 
-size_t g2l_os_fs_load_file(const char* file_name,
-                           void* data,
-                           size_t max_data_size) {
-    full_path_name path;
-    create_full_path_name(path, file_name);
-    FILE* fp = fopen(path, "r");
-    size_t result_size = 0;
-    if (fp) {
-        result_size = fread(data, 1, max_data_size, fp);
-        fclose(fp);
-    } else {
-        E(TAG, "Failed to open file '%s' to read (error: %s)", path,
-          strerror(errno));
+void g2l_fs_file_close(g2l_fs_file_t* file) {
+    if (file) {
+        fclose(file->file);
+        free(file);
     }
-    return result_size;
+}
+
+size_t g2l_fs_file_read(g2l_fs_file_t* file, void* data, size_t max_data_size) {
+    if (!file) {
+        return 0;
+    }
+    return fread(data, 1, max_data_size, file->file);
+}
+
+size_t g2l_fs_file_write(g2l_fs_file_t* file,
+                         const void* data,
+                         size_t data_size) {
+    if (!file) {
+        return 0;
+    }
+    return fwrite(data, 1, data_size, file->file);
+}
+
+bool g2l_fs_file_seek(g2l_fs_file_t* file,
+                      g2l_fs_seek_mode_t mode,
+                      size_t offset) {
+    if (!file) {
+        return 0;
+    }
+    int whence = SEEK_SET;
+    if (mode == G2L_FS_SEEK_CUR) {
+        whence = SEEK_CUR;
+    } else if (mode == G2L_FS_SEEK_END) {
+        whence = SEEK_END;
+    }
+    return (fseek(file->file, (long)offset, whence) == 0);
 }

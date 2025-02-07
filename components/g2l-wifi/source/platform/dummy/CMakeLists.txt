@@ -23,3 +23,7 @@
 target_sources(${PROJECT_NAME}
     PRIVATE g2l-hal-wifi.c
 )
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::log
+)

@@ -29,5 +29,5 @@ add_library(${PROJECT_NAME} STATIC)
 add_subdirectory(source)
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC g2l::os::fs
+    PUBLIC g2l::fs
 )

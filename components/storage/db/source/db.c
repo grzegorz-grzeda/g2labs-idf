@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 #include "db.h"
-#include "g2l-os-fs.h"
+#include "g2l-fs.h"
 
 #include <string.h>
 
@@ -42,7 +42,7 @@ static void create_namespace_key(namespace_key nk,
 }
 
 void db_init(void) {
-    g2l_os_fs_initialize();
+    g2l_fs_initialize(NULL);
 }
 
 size_t db_set(const char* namespace,
@@ -51,13 +51,19 @@ size_t db_set(const char* namespace,
               size_t value_size) {
     namespace_key nk;
     create_namespace_key(nk, namespace, key);
-    return g2l_os_fs_store_file(nk, value, value_size);
+    g2l_fs_file_t* file = g2l_fs_file_open(nk, G2L_FS_MODE_WRITE);
+    if (!file) {
+        return 0;
+    }
+    size_t written = g2l_fs_file_write(file, value, value_size);
+    g2l_fs_file_close(file);
+    return written;
 }
 
 size_t db_does_exist(const char* namespace, const char* key) {
     namespace_key nk;
     create_namespace_key(nk, namespace, key);
-    return g2l_os_fs_get_size_of_file(nk);
+    return g2l_fs_file_size(nk);
 }
 
 size_t db_get(const char* namespace,
@@ -66,5 +72,11 @@ size_t db_get(const char* namespace,
               size_t max_value_size) {
     namespace_key nk;
     create_namespace_key(nk, namespace, key);
-    return g2l_os_fs_load_file(nk, value, max_value_size);
+    g2l_fs_file_t* file = g2l_fs_file_open(nk, G2L_FS_MODE_READ);
+    if (!file) {
+        return 0;
+    }
+    size_t size = g2l_fs_file_read(file, value, max_value_size);
+    g2l_fs_file_close(file);
+    return size;
 }

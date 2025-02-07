@@ -20,6 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-target_sources(${PROJECT_NAME}
-    PRIVATE g2labs-platform-filesystem.c
-)
+cmake_minimum_required(VERSION 3.22)
+enable_testing()
+
+project(g2l-fs LANGUAGES C VERSION 2.0.0)
+add_library(${PROJECT_NAME} STATIC)
+add_library(g2l::fs ALIAS ${PROJECT_NAME})
+
+add_subdirectory(source)

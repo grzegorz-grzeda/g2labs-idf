@@ -22,6 +22,7 @@
 add_subdirectory(hal)
 add_subdirectory(network)
 add_subdirectory(g2l-delay)
+add_subdirectory(g2l-fs)
 add_subdirectory(g2l-thread)
 add_subdirectory(g2l-mqtt)
 add_subdirectory(g2l-wifi)
