@@ -5,7 +5,9 @@
  * Written by Grzegorz Grzęda <grzegorz.grzeda@g2labs.pl>, 03.2023
  */
 #include "font.h"
+#include "fonts-used.h"
 
+#ifdef FONT_USE_5X7
 static const uint8_t font_5x7_table[] = {
     0x00, 0x00, 0x00, 0x00, 0x00,  // (space)
     0x00, 0x00, 0x5F, 0x00, 0x00,  // !
@@ -109,3 +111,11 @@ const font_t _font_5x7_object = {
     .width = 5,
     .table = font_5x7_table,
 };
+#else
+
+const font_t _font_6x8_object = {
+    .height = 0,
+    .width = 0,
+    .table = NULL,
+};
+#endif

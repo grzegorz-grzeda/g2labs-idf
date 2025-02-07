@@ -10,6 +10,7 @@
 #include "font.h"
 
 #cmakedefine FONT_USE_3X5
+#define FONT_USE_5X7
 #cmakedefine FONT_USE_4X6
 #cmakedefine FONT_USE_6X8
 #cmakedefine FONT_USE_24X32
