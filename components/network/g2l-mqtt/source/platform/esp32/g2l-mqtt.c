@@ -213,7 +213,7 @@ void g2l_mqtt_subscribe(g2l_mqtt_client_t* client, const char* topic) {
     if (!client || !topic) {
         return;
     }
-    esp_mqtt_client_subscribe(client->client, topic, 0);
+    esp_mqtt_client_subscribe(client->client, topic, 2);
 }
 
 void g2l_mqtt_unsubscribe(g2l_mqtt_client_t* client, const char* topic) {}
