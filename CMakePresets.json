@@ -1,0 +1,41 @@
+{
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 31,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "tests",
+            "displayName": "Tests",
+            "description": "Configure for Unit Tests",
+            "binaryDir": "${sourceDir}/build/tests",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/tests.toolchain.cmake"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "tests",
+            "description": "Unit Tests build",
+            "configurePreset": "tests",
+            "displayName": "Unit Tests"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "tests",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "tests"
+                },
+                {
+                    "type": "build",
+                    "name": "tests"
+                }
+            ],
+            "description": "Unit Tests workflow"
+        }
+    ]
+}
