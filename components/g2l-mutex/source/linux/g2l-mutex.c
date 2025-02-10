@@ -22,33 +22,42 @@
  * SOFTWARE.
  */
 #include "g2l-mutex.h"
+#include <pthread.h>
 #include <stdlib.h>
-#include "g2l-os-queue.h"
 
 typedef struct g2l_mutex {
-    g2l_os_queue_t* queue;
+    pthread_mutex_t mutex;
 } g2l_mutex_t;
 
 g2l_mutex_t* g2l_mutex_create(void) {
     g2l_mutex_t* mtx = calloc(1, sizeof(g2l_mutex_t));
     if (mtx) {
-        mtx->queue = g2l_os_queue_create(1, sizeof(int));
+        if (pthread_mutex_init(&mtx->mutex, NULL) != 0) {
+            free(mtx);
+            mtx = NULL;
+        }
     }
     return mtx;
+}
+
+void g2l_mutex_destroy(g2l_mutex_t* mutex) {
+    if (!mutex) {
+        return;
+    }
+    pthread_mutex_destroy(&mutex->mutex);
+    free(mutex);
 }
 
 void g2l_mutex_lock(g2l_mutex_t* mutex) {
     if (!mutex) {
         return;
     }
-    int data = 0;
-    g2l_os_queue_send(mutex->queue, &data);
+    pthread_mutex_lock(&mutex->mutex);
 }
 
 void g2l_mutex_unlock(g2l_mutex_t* mutex) {
     if (!mutex) {
         return;
     }
-    int data = 0;
-    g2l_os_queue_receive(mutex->queue, &data);
+    pthread_mutex_unlock(&mutex->mutex);
 }

@@ -28,6 +28,8 @@ typedef struct g2l_mutex g2l_mutex_t;
 
 g2l_mutex_t* g2l_mutex_create(void);
 
+void g2l_mutex_destroy(g2l_mutex_t* mutex);
+
 void g2l_mutex_lock(g2l_mutex_t* mutex);
 
 void g2l_mutex_unlock(g2l_mutex_t* mutex);
