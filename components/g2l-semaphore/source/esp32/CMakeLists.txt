@@ -20,11 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-cmake_minimum_required(VERSION 3.22)
-enable_testing()
+target_sources(${PROJECT_NAME}
+    PRIVATE g2l-semaphore.c
+)
 
-project(g2l-mutex LANGUAGES C VERSION 1.0.0)
-add_library(${PROJECT_NAME} STATIC)
-add_library(g2l::mutex ALIAS ${PROJECT_NAME})
-
-add_subdirectory(source)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE idf::freertos
+)
