@@ -25,16 +25,16 @@
 #include <stdlib.h>
 
 #include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "freertos/queue.h"
 
 typedef struct g2l_mutex {
-    SemaphoreHandle_t handle;
+    QueueHandle_t handle;
 } g2l_mutex_t;
 
 g2l_mutex_t* g2l_mutex_create(void) {
     g2l_mutex_t* mtx = calloc(1, sizeof(g2l_mutex_t));
     if (mtx) {
-        mtx->handle = xSemaphoreCreateMutex();
+        mtx->handle = xQueueCreate(1, sizeof(int));
         if (mtx->handle == NULL) {
             free(mtx);
             mtx = NULL;
@@ -44,31 +44,35 @@ g2l_mutex_t* g2l_mutex_create(void) {
 }
 
 void g2l_mutex_lock(g2l_mutex_t* mutex) {
-    if (mutex && mutex->handle) {
-        if (xPortInIsrContext()) {
-            BaseType_t _dummy = pdFALSE;
-            xSemaphoreTakeFromISR(mutex->handle, &_dummy);
-        } else {
-            xSemaphoreTake(mutex->handle, portMAX_DELAY);
-        }
+    if (!mutex || !mutex->handle) {
+        return;
+    }
+    int item = 0;
+    if (xPortInIsrContext()) {
+        BaseType_t _dummy = pdFALSE;
+        xQueueSendFromISR(mutex->handle, &item, &_dummy);
+    } else {
+        xQueueSend(mutex->handle, &item, portMAX_DELAY);
     }
 }
 
 void g2l_mutex_unlock(g2l_mutex_t* mutex) {
-    if (mutex && mutex->handle) {
-        if (xPortInIsrContext()) {
-            BaseType_t _dummy = pdFALSE;
-            xSemaphoreGiveFromISR(mutex->handle, &_dummy);
-        } else {
-            xSemaphoreGive(mutex->handle);
-        }
+    if (!mutex || !mutex->handle) {
+        return;
+    }
+    int item = 0;
+    if (xPortInIsrContext()) {
+        BaseType_t _dummy = pdFALSE;
+        xQueueReceiveFromISR(mutex->handle, &item, &_dummy);
+    } else {
+        xQueueReceive(mutex->handle, &item, portMAX_DELAY);
     }
 }
 
 void g2l_mutex_destroy(g2l_mutex_t* mutex) {
     if (mutex) {
         if (mutex->handle) {
-            vSemaphoreDelete(mutex->handle);
+            vQueueDelete(mutex->handle);
         }
         free(mutex);
     }
