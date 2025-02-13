@@ -21,35 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include "g2l-fs.h"
+#include "g2l-log.h"
+
+#define TAG "g2l-fs"
 
 #define FULL_FILE_NAME_PATH (100)
+#define DEFAULT_BASE_PATH "/var/tmp/g2labs-idf"
 
-typedef char fs_base_path[FULL_FILE_NAME_PATH];
+typedef struct g2l_fs_file {
+    FILE* file;
+} g2l_fs_file_t;
+
+typedef char file_name_path[FULL_FILE_NAME_PATH];
+static char fs_base_path[FULL_FILE_NAME_PATH] = DEFAULT_BASE_PATH;
 
 void g2l_fs_initialize(const char* base_path) {
     if (base_path) {
+        memset(fs_base_path, 0, sizeof(fs_base_path));
         strcpy(fs_base_path, base_path);
     }
 }
 
-static void construct_full_path_from_file_name(file_name_path full_path,
-                                               const char* file_name) {
-    strcpy(full_path, "/var/tmp/g2labs-firmware-platform-");
-    strcat(full_path, file_name);
-}
-static void create_full_path_name(full_path_name full_path, const char* name) {
+static void create_full_path_name(file_name_path full_path, const char* name) {
     strcpy(full_path, fs_base_path);
     strcat(full_path, "/");
     strcat(full_path, name);
 }
 
 size_t g2l_fs_file_size(const char* file_name) {
-    full_path_name path;
+    file_name_path path;
     create_full_path_name(path, file_name);
     struct stat info;
     int result = stat(path, &info);
@@ -63,7 +70,7 @@ size_t g2l_fs_file_size(const char* file_name) {
 }
 
 g2l_fs_file_t* g2l_fs_file_open(const char* file_name, g2l_fs_mode_t mode) {
-    full_path_name path;
+    file_name_path path;
     create_full_path_name(path, file_name);
     char* mode_str = NULL;
     if (mode == G2L_FS_MODE_READ) {

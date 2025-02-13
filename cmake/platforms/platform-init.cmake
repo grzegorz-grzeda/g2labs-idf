@@ -22,6 +22,8 @@
 #
 if(G2L_IDF_TARGET_PLATFORM STREQUAL "esp32")
     include(${CMAKE_CURRENT_LIST_DIR}/esp32/platform-init.cmake)
+elseif(G2L_IDF_TARGET_PLATFORM STREQUAL "linux")
+    include(${CMAKE_CURRENT_LIST_DIR}/linux/platform-init.cmake)
 else()
     function(platform_build executable)
         target_link_libraries(${executable} PRIVATE g2l::main)

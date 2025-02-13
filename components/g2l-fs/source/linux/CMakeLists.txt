@@ -20,8 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-if((DEFINED G2L_IDF_TARGET_PLATFORM) AND(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${G2L_IDF_TARGET_PLATFORM}))
-    add_subdirectory(${G2L_IDF_TARGET_PLATFORM})
-else()
-    add_subdirectory(dummy)
-endif()
+target_sources(${PROJECT_NAME}
+    PRIVATE g2labs-platform-filesystem.c
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE g2l::log
+)
